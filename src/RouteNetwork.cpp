@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "Route.h"
+
 RouteNetwork::RouteNetwork() {
     route_network_ = nullptr;
     locations_ = nullptr;
@@ -54,9 +56,58 @@ bool RouteNetwork::parseLocation(const std::string& location_file) {
     locations.close();
 
     return true;
+}
 
+bool RouteNetwork::parseRoute(const std::string& route_file) {
+    std::ifstream routes(route_file);
+    std::string line ;
 
+    if (!std::getline(routes,line)) {
+        return false;
+    }
+
+    std::string orig_location, dest_location, walking_time, driving_time;
+    std::istringstream iss(line);
+    char sep = ',';
+    double w_time, d_time;
+    while (std::getline(routes,line)) {
+        iss.clear();
+        iss.str(line);
+        getline(iss,orig_location,sep);
+        getline(iss,dest_location,sep);
+        getline(iss,driving_time,sep);
+        getline(iss,walking_time,sep);
+
+        if (driving_time == "X") {
+            d_time = INT_MAX;
+        }
+        else {
+            d_time = std::stod(driving_time);
+        }
+        w_time = std::stod(walking_time);
+
+        addEdge(orig_location,dest_location,w_time,d_time);
+    }
+
+    routes.close();
+
+    return true;
 
 }
+
+bool RouteNetwork::parseData(const std::string &location_data, const std::string &route_data) {
+
+    if (!parseLocation(location_data)) {
+        std::cout << "Location file does not exist" << std::endl;
+        return false;
+    }
+
+    if (!parseRoute(route_data)) {
+        std::cout << "Route file does not exist" << std::endl;
+        return false;
+    }
+    return true;
+}
+
 
 
