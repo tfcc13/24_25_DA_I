@@ -5,6 +5,7 @@
 #ifndef INPUTHANDLER_H
 #define INPUTHANDLER_H
 #include <iostream>
+#include <sstream>
 
 class InputHandler {
 
@@ -17,13 +18,13 @@ class InputHandler {
      *@brief Waits for an user input.
      * @return Returns the user input.
      */
-    static string getInput();
+    static std::string getInput();
 
     /**
      * @brief Waits for an user input string.
      * @return the user input.
      */
-    static string getInputLine();
+    static std::string getInputLine();
 
     /**
      * @brief Converts an user input string to a variable T.
@@ -33,8 +34,8 @@ class InputHandler {
      * @return  true if conversion is successful.
      */
     template <typename T>
-    static bool convertStrToVar(const string &str, T &var){
-        istringstream ss{str};
+    static bool convertStrToVar(const std::string &str, T &var){
+        std::istringstream ss{str};
         ss >> var;
         if(ss.fail() || !ss.eof()){
             return false;
@@ -50,7 +51,7 @@ class InputHandler {
      */
     template<typename T>
     static bool get(T &var) {
-        string str = getInput();
+        std::string str = getInput();
         if (str.empty()) {
             return false;
         }

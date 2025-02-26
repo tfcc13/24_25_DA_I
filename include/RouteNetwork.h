@@ -23,7 +23,8 @@ public:
     RouteNetwork();
     ~RouteNetwork();
     bool parseData(const std::string& location_data, const std::string& route_data);
-
+    std::unordered_map<std::string ,Location*>* getLocations();
+    int getNumberOfLocations();
 
 };
 

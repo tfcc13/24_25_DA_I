@@ -1,22 +1,33 @@
 #include <iostream>
+#include <stack>
+
+#include "Menu.h"
 
 // TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
-    // <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+    RouteNetwork *network = new RouteNetwork();
+    std::stack<Menu*> menu;
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
-        // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
-        // breakpoint for you, but you can always add more by pressing
-        // <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
+
+    menu.push(new DataMenu(*network));
+
+    while(!menu.empty()) {
+        menu.top()->show();
+        Menu * menuPtr = menu.top()->getNextMenu();
+
+        if(menuPtr) {
+            if(menuPtr != menu.top()) {
+                menu.push(menuPtr);
+            }
+        }
+        else {
+            delete menu.top();
+            menu.pop();
+        }
     }
 
-    return 0;
+    std::cout << "BYE! See you next time." << std::endl;
 }
 
 // TIP See CLion help at <a

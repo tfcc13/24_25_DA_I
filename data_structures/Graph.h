@@ -87,14 +87,15 @@ public:
     void setReverse(Edge<T> *reverse);
     void setFlow(double flow);
 protected:
+    // used for bidirectional edges
+    Vertex<T> *orig;
     Vertex<T> * dest; // destination vertex
-    double driving_time_; // edge weight, can also be used for capacity
     double walking_time_;
+    double driving_time_; // edge weight, can also be used for capacity
     // auxiliary fields
     bool selected = false;
 
-    // used for bidirectional edges
-    Vertex<T> *orig;
+
     Edge<T> *reverse = nullptr;
 
     double flow; // for flow-related problems

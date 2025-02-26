@@ -3,11 +3,13 @@
 //
 #include "InputHandler.h"
 
+#include <limits>
+
 
 void InputHandler::waitForInput() {
     std::cout << std::endl << "Press enter to continue ..." << std::endl;
     std::string tempString;
-    std::cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     getline(std::cin,tempString);
 }
 

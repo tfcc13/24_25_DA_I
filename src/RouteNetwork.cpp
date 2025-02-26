@@ -11,17 +11,24 @@
 
 RouteNetwork::RouteNetwork() {
     route_network_ = nullptr;
-    locations_ = nullptr;
+    locations_ = new std::unordered_map<std::string, Location*>();
 }
 
 RouteNetwork::~RouteNetwork() {
-    for (auto& pair : locations_) {
+    for (auto& pair : *locations_) {
         delete pair.second;
     }
     delete route_network_;
     delete locations_;
 
 }
+
+// change this
+void trimString(std::string &str) {
+    while (!str.empty() && (str.back() == '\r' || str.back() == ','))
+        str.pop_back();
+}
+
 
 bool RouteNetwork::parseLocation(const std::string& location_file) {
 
@@ -41,12 +48,15 @@ bool RouteNetwork::parseLocation(const std::string& location_file) {
     while (std::getline(locations,line)) {
         iss.clear();
         iss.str(line);
+        getline(iss,location,sep);
         getline(iss,id,sep);
         getline(iss,code,sep);
         getline(iss,park,sep);
+        trimString(park);
 
-        canPark = (std::stoi(park) == 1);
-        Location* tempLocation = new Location(location,id,code,canPark); ;
+        canPark = (std::stoi(park)  == 1);
+
+        auto* tempLocation = new Location(location,id,code,canPark);
         this->addVertex(tempLocation);
 
         this->locations_->insert(std::make_pair(code,tempLocation));
@@ -77,6 +87,7 @@ bool RouteNetwork::parseRoute(const std::string& route_file) {
         getline(iss,dest_location,sep);
         getline(iss,driving_time,sep);
         getline(iss,walking_time,sep);
+        trimString(walking_time);
 
         if (driving_time == "X") {
             d_time = INT_MAX;
@@ -86,7 +97,7 @@ bool RouteNetwork::parseRoute(const std::string& route_file) {
         }
         w_time = std::stod(walking_time);
 
-        addEdge(orig_location,dest_location,w_time,d_time);
+        addBidirectionalEdge(orig_location,dest_location,w_time,d_time);
     }
 
     routes.close();
@@ -108,6 +119,15 @@ bool RouteNetwork::parseData(const std::string &location_data, const std::string
     }
     return true;
 }
+
+std::unordered_map<std::string ,Location*>* RouteNetwork::getLocations() {
+    return locations_;
+}
+
+int RouteNetwork::getNumberOfLocations() {
+    return this->getVertexSet().size();
+}
+
 
 
 
