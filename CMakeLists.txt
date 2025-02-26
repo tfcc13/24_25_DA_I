@@ -13,4 +13,8 @@ include_directories(${PROJECT_SOURCE_DIR}/data_structures)
 
 add_executable(DA_PROJECT_1 main.cpp
         include/InputHandler.h
-        src/InputHandler.cpp)
+        src/InputHandler.cpp
+        include/RouteNetwork.h
+        src/RouteNetwork.cpp
+        src/Location.cpp
+        include/Location.h)
