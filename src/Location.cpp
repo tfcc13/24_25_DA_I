@@ -4,29 +4,34 @@
 
 #include "Location.h"
 
-#include <string>
+Location::Location(std::string name, std::string id, std::string code, bool canPark) : Vertex<std::string>(code), name_(name), id_(id), code_(code), canPark_(canPark) {}
 
-class Location {
 
-private:
-    std::string name;
-    int id;
-    std::string code;
-    bool canPark;
-public:
-    Location();
+std::string Location::getName() {
+    return name_;
+}
 
-    Location(std::string name, std::string code, bool canPark);
+std::string Location::getId() {
+    return id_;
+}
 
-    std::string getName();
+std::string Location::getCode() {
+    return code_;
+}
 
-    std::string getCode();
+bool Location::getCanPark() {
+    return canPark_;
+}
 
-    bool getCanPark();
+void Location::setName(std::string name) {
+    name_ = name;
+}
 
-    void setName(std::string name);
-    
-    void setCode(std::string code);
+void Location::setCode(std::string code) {
+    code_ = code;
+}
 
-    void setCanPark(bool canPark);
-};
+void Location::setCanPark(bool canPark) {
+    canPark_ = canPark;
+}
+
