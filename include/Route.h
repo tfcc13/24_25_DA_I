@@ -5,6 +5,7 @@
 #ifndef ROUTE_H
 #define ROUTE_H
 #include <Graph.h>
+#include <climits>
 
 class Route : public Edge<std::string> {
 private:
