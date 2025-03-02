@@ -41,6 +41,8 @@ public:
     void setLow(int value);
     int getNum() const;
     void setNum(int value);
+    int getQueueIndex() const;  // needed for heap
+    void setQueueIndex(int value);    // needed for heap
 
     void setIndegree(unsigned int indegree);
     void setDist(double dist);
@@ -227,6 +229,16 @@ int Vertex<T>::getNum() const {
 template <class T>
 void Vertex<T>::setNum(int value) {
     this->num = value;
+}
+
+template <class T>
+int Vertex<T>::getQueueIndex() const {
+    return this->queueIndex;
+}
+
+template <class T>
+void Vertex<T>::setQueueIndex(int value) {
+    this->queueIndex = value;
 }
 
 template <class T>
