@@ -21,4 +21,8 @@ add_executable(DA_PROJECT_1 main.cpp
         include/Route.h
         src/Route.cpp
         include/Menu.h
-        src/Menu.cpp)
+        src/Menu.cpp
+        src/PathFinding.cpp
+        include/RequestProcessor.h
+        src/RequestProcessor.cpp
+)

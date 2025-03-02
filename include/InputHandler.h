@@ -7,6 +7,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "RequestProcessor.h"
+
 class InputHandler {
 
     public:
@@ -57,6 +59,14 @@ class InputHandler {
         }
         return convertStrToVar(str, var);
     }
+
+
+    /**
+     * @brief Reads from file and transforms into Request
+     * @param filepath Path to file to read input
+     * @return Request with given values in read file
+     */
+    static Request parseInputFile(const std::string& filepath);
 
 
 };

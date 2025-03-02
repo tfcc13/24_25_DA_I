@@ -49,4 +49,11 @@ public:
 
 };
 
+class InputMenu : public Menu {
+    public:
+    InputMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
 #endif //MENU_H

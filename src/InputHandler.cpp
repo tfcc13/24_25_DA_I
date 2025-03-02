@@ -3,6 +3,7 @@
 //
 #include "InputHandler.h"
 
+#include <fstream>
 #include <limits>
 
 
@@ -27,4 +28,60 @@ std::string InputHandler::getInputLine() {
     getline(std::cin, input);
     std::cout << std::endl;
     return input;
+}
+
+Request InputHandler::parseInputFile(const std::string& filepath) {
+    Request route;
+    std::ifstream file(filepath);
+    std::string line;
+
+    if (!file) {
+        std::cerr << "Error: Could not open file " << filepath << "\n";
+        return route;
+    }
+
+    while(getline(file, line)) {
+        std::istringstream iss(line);
+        std::string key, value;
+        getline(iss >> std::ws, key, ':'); // Remove leading whitespace
+        getline(iss >> std::ws, value);    // Remove leading whitespace in value
+        value = value.substr(0, value.find("\r"));
+
+        //std::cout << key << " " << value <<std::endl;
+
+        if (key == "Mode") route.mode = value;
+        else if (key == "Source") route.src = std::stoi(value);
+        else if (key == "Destination") route.dest=std::stoi(value);
+        else if (key == "AvoidNodes") {
+            std::istringstream ss(value);
+            int node;
+            while (ss >> node) {
+                route.avoidNodes.push_back(node);
+                if (ss.peek() == ',') ss.ignore();
+            }
+        }
+        else if (key == "AvoidSegments") {
+            std::istringstream ss(value);
+            char token;
+            int a, b;
+
+            while (ss >> token) {
+                if (token != '(') continue;
+
+                ss >> a >> token >> b >> token;
+
+                route.avoidSegments.emplace_back(a,b);
+            }
+        }
+        else if (key == "IncludeNode") {
+            if (!value.empty()) route.includeNode = std::stoi(value);
+        }
+        else if (key == "MaxWalkTime") {
+            if (!value.empty()) route.maxWalkTime = std::stoi(value);
+        }
+
+    }
+
+    file.close();
+    return route;
 }

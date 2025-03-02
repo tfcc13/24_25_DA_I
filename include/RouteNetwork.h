@@ -26,6 +26,7 @@ public:
     std::unordered_map<std::string ,Location*>* getLocations();
     int getNumberOfLocations();
 
+    Location* getLocationById(int id);
 };
 
 #endif //ROUTENETWORK_H

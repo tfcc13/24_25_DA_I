@@ -3,6 +3,10 @@
 //
 
 #include "Menu.h"
+#include "../src/PathFinding.cpp"
+#include <filesystem>
+
+#include "RequestProcessor.h"
 
 Menu::Menu(RouteNetwork &route_network) : route_network_(route_network) {}
 
@@ -77,7 +81,8 @@ void MainMenu::show() {
     std::cout << "MENU: \n\n";
 
     std::cout << "(" << ++options << ") >> " << "Go to Locations  Menu" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Go to  Routes Menu" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Go to Routes Menu" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Process Input" << std::endl;
     std::cout << "(0) >> Exit "<< std::endl;
 }
 
@@ -95,6 +100,9 @@ Menu *MainMenu::getNextMenu() {
         }
         case 2: {
             // to implement
+        }
+        case 3: {
+            return new InputMenu(route_network_);
         }
     }
     InputHandler::waitForInput();
@@ -143,10 +151,64 @@ Menu *LocationMenu::getNextMenu() {
 
 
 
+InputMenu::InputMenu(RouteNetwork &network) : Menu(network) {}
+
+void InputMenu::show() {
+    std::cout << CLEAR;
+    int options = 0;
+
+    std::cout << "CHOSE THE INPUT FILE: \n\n";
+    std::string directory = "../input/";
+    std::vector<std::filesystem::path> files;
+
+    try {
+        for (const auto &entry : std::filesystem::directory_iterator(directory)) {
+            if (entry.is_regular_file()) {
+                files.push_back(entry.path().filename());
+            }
+        }
+
+        std::sort(files.begin(), files.end());
+
+        for (const auto &file : files) {
+            std::cout << "(" << ++options << ") >> " << file.string() << std::endl;
+        }
+    } catch (const std::filesystem::filesystem_error &e) {
+        std::cout << e.code() << " " << e.what() << std::endl;
+    }
+
+
+    std::cout << "(0) >> Exit "<< std::endl;
+}
 
 
 
+Menu *InputMenu::getNextMenu() {
+    int option;
+    if(!InputHandler::get(option)) {
+        return invalidInput();
+    }
 
+    std::string directory = "../input/";
+    std::vector<std::filesystem::path> files;
+
+    for (const auto &entry : std::filesystem::directory_iterator(directory)) {
+        if (entry.is_regular_file()) {
+            files.push_back(entry.path().filename());
+        }
+    }
+    std::sort(files.begin(), files.end());
+
+    if (option == 0) return nullptr;
+
+    std::string filepath = directory + files[option - 1].string();
+    Request r = InputHandler::parseInputFile(filepath);
+    RequestProcessor::processRequest(r, route_network_);
+
+    InputHandler::waitForInput();
+
+    return this;
+}
 
 
 

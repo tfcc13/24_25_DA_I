@@ -128,6 +128,13 @@ int RouteNetwork::getNumberOfLocations() {
     return this->getVertexSet().size();
 }
 
+Location* RouteNetwork::getLocationById(int id) {
+    for (auto loc : *locations_) {
+        if (std::stoi(loc.second->getId()) == id) return loc.second;
+    }
+    return nullptr;
+}
+
 
 
 
