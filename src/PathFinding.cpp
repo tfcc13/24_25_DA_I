@@ -53,12 +53,14 @@ inline void dijkstra(RouteNetwork* rn, int src_id) {
 }
 
 //maybe make bool for impossible paths
-inline void printPath(RouteNetwork *rn, const int &origin, const int &dest) {
+inline std::vector<std::string> getPath(RouteNetwork *rn, const int &origin, const int &dest, int &weight) {
     Location *v = rn->getLocationById(dest);
     Location *org = rn->getLocationById(origin);
+    std::vector<std::string> path;
     std::stack<Location*> s;
     s.push(v);
     double carWeight =0;
+    if (v->getPath() == nullptr) return path;
 
     while (v != nullptr && v != org) {
         carWeight += v->getPath()->getDrivingTime();
@@ -67,10 +69,12 @@ inline void printPath(RouteNetwork *rn, const int &origin, const int &dest) {
     }
 
     while (!s.empty()) {
-        std::cout << s.top()->getId() << " ";
+        //std::cout << s.top()->getId() << " ";
+        path.push_back(s.top()->getId());
         s.pop();
     }
-    std::cout <<"(" << carWeight <<")" << std::endl;
+    //std::cout <<"(" << carWeight <<")" << std::endl;
+    return path;
 }
 
 

@@ -23,7 +23,16 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
     << "Destination:" << request.dest << std::endl
     << "BestDrivingRoute:" ;
     dijkstra(&route_network, request.src);
-    printPath(&route_network, request.src, request.dest);
+
+    int w=0;
+    std::vector<std::string> v = getPath(&route_network, request.src, request.dest, w);
+    if (v.empty()) {
+        std::cout << "None\n";
+        return;
+    }
+
+    for (auto s : v) std::cout << s <<" ";
+    std::cout << std::endl;
     //alternative route to be implemented, just remove the used nodes and repeat
 }
 
