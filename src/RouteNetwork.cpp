@@ -135,6 +135,47 @@ Location* RouteNetwork::getLocationById(int id) {
     return nullptr;
 }
 
+std::vector<Vertex<std::string>*> RouteNetwork::getLocationSet() {
+    return this->getVertexSet();
+}
 
+void RouteNetwork::blockNode(int id) {
+    Location* l = getLocationById(id);
+    blockedNodes.insert(l);
+}
+
+void RouteNetwork::blockEdge(int id1, int id2) {
+    Vertex<std::string>* l1 = getLocationById(id1);
+    Vertex<std::string>* l2 = getLocationById(id2);
+
+    for (auto e : l1->getAdj()) {
+        auto w = e->getDest();
+        if (l2 == w) {
+            blockedEdges.insert(e);
+        }
+    }
+
+    for (auto e : l2->getAdj()) {
+        auto w = e->getDest();
+        if (l1 == w) {
+            blockedEdges.insert(e);
+        }
+
+    }
+    std::cout << std::endl;
+}
+
+bool RouteNetwork::isNodeBlocked(Vertex<std::string>* v) {
+    return blockedNodes.find(v) != blockedNodes.end();
+}
+
+bool RouteNetwork::isEdgeBlocked(Edge<std::string>* e) {
+    return blockedEdges.find(e) != blockedEdges.end();
+}
+
+void RouteNetwork::clearBlocked() {
+    blockedNodes.clear();
+    blockedEdges.clear();
+}
 
 

@@ -5,6 +5,7 @@
 
 #include "Route.h"
 #include "RouteNetwork.h"
+#include "RequestProcessor.h"
 #include "../data_structures/MutablePriorityQueue.h"
 #include <stack>
 
@@ -21,60 +22,69 @@ inline bool relax(Edge<std::string>* route) {
 }
 
 inline void dijkstra(RouteNetwork* rn, int src_id) {
-    for (auto& p : *rn->getLocations()) {
-        p.second->setDist(INT_MAX);
-        p.second->setPath(nullptr);
-        p.second->setProcessing(false);
+    for (auto& p : rn->getLocationSet() ){
+        p->setDist(INT_MAX);
+        p->setPath(nullptr);
     }
 
     Location* org = rn->getLocationById(src_id);
     org->setDist(0);
-
     MutablePriorityQueue<Vertex<std::string>> pq;
-    pq.insert(org);
-    org->setProcessing(true);
+
+    for (auto v: rn->getLocationSet()) {
+        pq.insert(v);
+    }
 
     while (!pq.empty()) {
         auto u = pq.extractMin();
-        u->setProcessing(false);
+        if (rn->isNodeBlocked(u)) continue;
 
         for (auto e : u->getAdj()) {
+            if (rn->isEdgeBlocked(e)) continue;
+
             if (relax(e)) {
                 auto* v = e->getDest();
-                if (!v->isProcessing()) {
-                    pq.insert(v);
-                    v->setProcessing(true);
-                } else {
-                    pq.decreaseKey(v);
-                }
+                pq.decreaseKey(v);
+
             }
         }
     }
 }
 
-//maybe make bool for impossible paths
-inline std::vector<std::string> getPath(RouteNetwork *rn, const int &origin, const int &dest, int &weight) {
+inline std::vector<std::string> getVectorPath(RouteNetwork *rn, const int &origin, const int &dest, int &weight) {
     Location *v = rn->getLocationById(dest);
     Location *org = rn->getLocationById(origin);
     std::vector<std::string> path;
     std::stack<Location*> s;
     s.push(v);
-    double carWeight =0;
     if (v->getPath() == nullptr) return path;
 
     while (v != nullptr && v != org) {
-        carWeight += v->getPath()->getDrivingTime();
+        weight += v->getPath()->getDrivingTime();
         v = static_cast<Location*>(v->getPath()->getOrig());
         s.push(v);
     }
 
     while (!s.empty()) {
-        //std::cout << s.top()->getId() << " ";
         path.push_back(s.top()->getId());
         s.pop();
     }
-    //std::cout <<"(" << carWeight <<")" << std::endl;
     return path;
+}
+
+
+inline void printSimplePath(std::vector<std::string> v, int weight) {
+    if (v.empty()) {
+        std::cout << "None\n";
+        return;
+    }
+    for (auto s : v) std::cout << s <<",";
+    std::cout << "(" << weight << ")\n";
+}
+
+inline std::vector<std::string> getPath(RouteNetwork *rn, int source, int dest, int &weight) {
+    dijkstra(rn, source);
+    return getVectorPath(rn, source, dest, weight);
 }
 
 
