@@ -162,7 +162,6 @@ void RouteNetwork::blockEdge(int id1, int id2) {
         }
 
     }
-    std::cout << std::endl;
 }
 
 bool RouteNetwork::isNodeBlocked(Vertex<std::string>* v) {

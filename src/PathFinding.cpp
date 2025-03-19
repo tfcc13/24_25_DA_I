@@ -9,19 +9,28 @@
 #include "../data_structures/MutablePriorityQueue.h"
 #include <stack>
 
-inline bool relax(Edge<std::string>* route) {
+inline bool relax(Edge<std::string>* route, bool isDriving) {
     auto u = route->getOrig();
     auto v = route->getDest();
-    if (v->getDist() > u->getDist() + route->getDrivingTime()) {
-        v->setDist(u->getDist() + route->getDrivingTime());
-        v->setPath(route);
-        return true;
+    if (isDriving) {
+        if (v->getDist() > u->getDist() + route->getDrivingTime()) {
+            v->setDist(u->getDist() + route->getDrivingTime());
+            v->setPath(route);
+            return true;
+        }
+    }
+    else {
+        if (v->getDist() > u->getDist() + route->getWalkingTime()) {
+            v->setDist(u->getDist() + route->getWalkingTime());
+            v->setPath(route);
+            return true;
+        }
     }
     return false;
 
 }
 
-inline void dijkstra(RouteNetwork* rn, int src_id) {
+inline void dijkstra(RouteNetwork* rn, int src_id, bool mode) {
     for (auto& p : rn->getLocationSet() ){
         p->setDist(INT_MAX);
         p->setPath(nullptr);
@@ -42,7 +51,7 @@ inline void dijkstra(RouteNetwork* rn, int src_id) {
         for (auto e : u->getAdj()) {
             if (rn->isEdgeBlocked(e)) continue;
 
-            if (relax(e)) {
+            if (relax(e, mode)) {
                 auto* v = e->getDest();
                 pq.decreaseKey(v);
 
@@ -75,18 +84,24 @@ inline std::vector<std::string> getVectorPath(RouteNetwork *rn, const int &origi
 
 inline void printSimplePath(std::vector<std::string> v, int weight) {
     if (v.empty()) {
-        std::cout << "None\n";
+        std::cout << "none\n";
         return;
     }
     for (auto s : v) std::cout << s <<",";
     std::cout << "(" << weight << ")\n";
 }
 
-inline std::vector<std::string> getPath(RouteNetwork *rn, int source, int dest, int &weight) {
-    dijkstra(rn, source);
+inline std::vector<std::string> getPath(RouteNetwork *rn, int source, int dest, int &weight, bool mode) {
+    dijkstra(rn, source, mode);
     return getVectorPath(rn, source, dest, weight);
 }
 
+inline std::vector<std::string> mergeIncludePaths(std::vector<std::string> v1, std::vector<std::string> v2) {
+    std::vector<std::string> path;
+    for (auto s : v1) path.push_back(s);
+    for (size_t i = 1; i < v2.size(); i++) path.push_back(v2[i]);
+    return path;
+}
 
 
 
