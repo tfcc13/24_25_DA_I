@@ -60,7 +60,8 @@ inline void dijkstra(RouteNetwork* rn, int src_id, bool mode) {
     }
 }
 
-inline std::vector<std::string> getVectorPath(RouteNetwork *rn, const int &origin, const int &dest, int &weight) {
+//change weight to double
+inline std::vector<std::string> getVectorPath(RouteNetwork *rn, const int &origin, const int &dest, double &weight, bool isDriving) {
     Location *v = rn->getLocationById(dest);
     Location *org = rn->getLocationById(origin);
     std::vector<std::string> path;
@@ -69,7 +70,9 @@ inline std::vector<std::string> getVectorPath(RouteNetwork *rn, const int &origi
     if (v->getPath() == nullptr) return path;
 
     while (v != nullptr && v != org) {
-        weight += v->getPath()->getDrivingTime();
+        if (isDriving) weight += v->getPath()->getDrivingTime();
+        else weight += v->getPath()->getWalkingTime();
+
         v = static_cast<Location*>(v->getPath()->getOrig());
         s.push(v);
     }
@@ -82,7 +85,7 @@ inline std::vector<std::string> getVectorPath(RouteNetwork *rn, const int &origi
 }
 
 
-inline void printSimplePath(std::vector<std::string> v, int weight) {
+inline void printSimplePath(std::vector<std::string> v, double weight) {
     if (v.empty()) {
         std::cout << "none\n";
         return;
@@ -91,9 +94,9 @@ inline void printSimplePath(std::vector<std::string> v, int weight) {
     std::cout << "(" << weight << ")\n";
 }
 
-inline std::vector<std::string> getPath(RouteNetwork *rn, int source, int dest, int &weight, bool mode) {
+inline std::vector<std::string> getPath(RouteNetwork *rn, int source, int dest, double &weight, bool mode) {
     dijkstra(rn, source, mode);
-    return getVectorPath(rn, source, dest, weight);
+    return getVectorPath(rn, source, dest, weight, mode);
 }
 
 inline std::vector<std::string> mergeIncludePaths(std::vector<std::string> v1, std::vector<std::string> v2) {
