@@ -138,6 +138,8 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
         }
     }
 
+    route_network.clearBlocked();
+
     std::cout << "Source:" << request.src << std::endl
     << "Destination:" << request.dest << std::endl
     << "DrivingRoute:";
