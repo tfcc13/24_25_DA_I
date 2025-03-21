@@ -30,15 +30,133 @@ std::string InputHandler::getInputLine() {
     return input;
 }
 
-Request InputHandler::parseInputFile(const std::string& filepath) {
+void InputHandler::parseDriving(Request &route, std::string key, std::string value, int idx, bool &correct) {
+    switch (idx) {
+        case 0: {
+            if (key != "Mode") { correct = false; break;}
+            route.mode = value;
+            break;
+        }
+        case 1: {
+            if (key != "Source") {correct = false; break;}
+            try {route.src = std::stoi(value);}
+            catch (const std::invalid_argument&) {correct = false;}
+            break;
+        }
+        case 2: {
+            if (key != "Destination") {correct = false; break;}
+            try {route.dest = std::stoi(value);}
+            catch (const std::invalid_argument&) {correct = false;}
+            break;
+        }
+        case 3: {
+            if (key != "AvoidNodes") {correct = false; break;}
+            std::istringstream ss(value);
+            int node;
+            while (ss >> node) {
+                route.avoidNodes.push_back(node);
+                if (ss.peek() == ',') ss.ignore();
+            }
+            break;
+        }
+        case 4: {
+            if (key != "AvoidSegments") correct = false;
+            else {
+                std::istringstream ss(value);
+                char token;
+                int a, b;
+
+                while (ss >> token) {
+                    if (token != '(') continue;
+                    ss >> a >> token >> b >> token;
+                    route.avoidSegments.emplace_back(a,b);
+                }
+            }
+            break;
+        }
+        case 5: {
+            if (key != "IncludeNode") {correct = false; break;}
+             if(!value.empty()) {
+                 try {route.includeNode = std::stoi(value);}
+                 catch (const std::invalid_argument&) {correct = false;}
+             }
+            break;
+        }
+        default:break;
+    }
+}
+
+void InputHandler::parseDrivingWalking(Request &route, std::string key, std::string value, int idx, bool &correct) {
+    switch (idx) {
+        case 0: {
+            if (key != "Mode") { correct = false; break;}
+            route.mode = value;
+            break;
+        }
+        case 1: {
+            if (key != "Source") {correct = false; break;}
+            try {route.src = std::stoi(value);}
+            catch (const std::invalid_argument&) {correct = false;}
+            break;
+        }
+        case 2: {
+            if (key != "Destination") {correct = false; break;}
+            try {route.dest = std::stoi(value);}
+            catch (const std::invalid_argument&) {correct = false;}
+            break;
+        }
+        case 3: {
+            if (key != "MaxWalkTime") {correct = false; break;}
+            try {route.maxWalkTime = std::stoi(value);}
+            catch (const std::invalid_argument&) {correct = false;}
+            break;
+        }
+        case 4: {
+            if (key != "AvoidNodes") correct = false;
+            else {
+                std::istringstream ss(value);
+                int node;
+                while (ss >> node) {
+                    route.avoidNodes.push_back(node);
+                    if (ss.peek() == ',') ss.ignore();
+                }
+            }
+            break;
+        }
+        case 5: {
+            if (key != "AvoidSegments") correct = false;
+            else {
+                std::istringstream ss(value);
+                char token;
+                int a, b;
+
+                while (ss >> token) {
+                    if (token != '(') continue;
+
+                    ss >> a >> token >> b >> token;
+
+                    route.avoidSegments.emplace_back(a,b);
+                }
+            }
+            break;
+        }
+        default: break;
+    }
+}
+
+
+Request InputHandler::parseInputFile(const std::string& filepath, bool &correct) {
     Request route;
     std::ifstream file(filepath);
     std::string line;
 
     if (!file) {
         std::cerr << "Error: Could not open file " << filepath << "\n";
+        correct = false;
         return route;
     }
+
+    int idx = 0;
 
     while(getline(file, line)) {
         std::istringstream iss(line);
@@ -47,40 +165,16 @@ Request InputHandler::parseInputFile(const std::string& filepath) {
         getline(iss >> std::ws, value);    // Remove leading whitespace in value
         value = value.substr(0, value.find("\r"));
 
-        //std::cout << key << " " << value <<std::endl;
-
-        if (key == "Mode") route.mode = value;
-        else if (key == "Source") route.src = std::stoi(value);
-        else if (key == "Destination") route.dest=std::stoi(value);
-        else if (key == "AvoidNodes") {
-            std::istringstream ss(value);
-            int node;
-            while (ss >> node) {
-                route.avoidNodes.push_back(node);
-                if (ss.peek() == ',') ss.ignore();
-            }
+        if (value == "driving" || route.mode == "driving") {
+            parseDriving(route, key, value, idx, correct);
         }
-        else if (key == "AvoidSegments") {
-            std::istringstream ss(value);
-            char token;
-            int a, b;
-
-            while (ss >> token) {
-                if (token != '(') continue;
-
-                ss >> a >> token >> b >> token;
-
-                route.avoidSegments.emplace_back(a,b);
-            }
-        }
-        else if (key == "IncludeNode") {
-            if (!value.empty()) route.includeNode = std::stoi(value);
-        }
-        else if (key == "MaxWalkTime") {
-            if (!value.empty()) route.maxWalkTime = std::stoi(value);
-        }
+        else parseDrivingWalking(route, key, value, idx, correct);
+        idx++;
 
     }
+
+    if (route.mode == "driving" && (idx >= 4 && idx <= 5)) correct = false;
+    if (route.mode == "driving-walking" && idx != 6) correct = false;
 
     file.close();
     return route;
