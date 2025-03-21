@@ -33,6 +33,8 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
     v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
     printSimplePath(v, w);
 
+    if (v.empty()) return;
+
     //block intermediate blocks
     for (int i = 1; i < int(v.size())-1; i++) {
         route_network.blockNode(std::stoi(v[i]));
@@ -69,6 +71,8 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
         return;
     }
 
+    route_network.clearBlocked();
+
     w=0;
     std::vector<std::string> v2;
     v = getPath(&route_network, request.src, request.includeNode, w, DRIVING_MODE);
@@ -81,7 +85,6 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
     std::vector<std::string> path = mergeIncludePaths(v, v2);
     printSimplePath(path, w);
 
-    route_network.clearBlocked();
 }
 
 
