@@ -34,13 +34,17 @@ public:
     std::vector<Vertex<std::string>*> getLocationSet();
 
     Location* getLocationById(int id);
+    Location* getLocationByCode(const std::string& code);
+    Location* getLocationByName(const std::string& name);
 
     void blockNode(int node);
     void blockEdge(int a, int b);
     bool isNodeBlocked(Vertex<std::string>* v);
     bool isEdgeBlocked(Edge<std::string>* e);
     void clearBlocked();
-
+    void showLocationInfoById(std::string const&  id);
+    void showLocationInfoByCode(std::string const&  code);
+    void showLocationInfoByName(std::string const&  name);
 };
 
 #endif //ROUTENETWORK_H

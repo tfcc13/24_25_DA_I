@@ -60,6 +60,10 @@ class InputHandler {
         return convertStrToVar(str, var);
     }
 
+    static std::string toLowerString(const std::string& input);
+    static std::string toUpperString(const std::string& input);
+
+
 
     /**
      * @brief Reads from file and transforms into Request

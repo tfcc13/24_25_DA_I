@@ -30,6 +30,8 @@ public:
     void setCode(std::string code);
 
     void setCanPark(bool canPark);
+
+    void printInfo();
 };
 
 

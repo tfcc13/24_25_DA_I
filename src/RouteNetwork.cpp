@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "InputHandler.h"
 #include "Route.h"
 
 RouteNetwork::RouteNetwork() {
@@ -135,6 +136,28 @@ Location* RouteNetwork::getLocationById(int id) {
     return nullptr;
 }
 
+Location* RouteNetwork::getLocationByCode(const std::string& code) {
+
+    std::string upperCode = InputHandler::toUpperString(code);
+
+    auto iter = locations_->find(upperCode);
+    if (iter == locations_->end()) {
+        return nullptr;
+    }
+    return iter->second;
+}
+
+Location* RouteNetwork::getLocationByName(const std::string& name) {
+
+    std::string lowerName = InputHandler::toLowerString(name);
+
+    for (auto loc : *locations_) {
+        if (InputHandler::toLowerString(loc.second->getName()) == lowerName) return loc.second;
+    }
+    return nullptr;
+}
+
+
 std::vector<Vertex<std::string>*> RouteNetwork::getLocationSet() {
     return this->getVertexSet();
 }
@@ -175,6 +198,36 @@ bool RouteNetwork::isEdgeBlocked(Edge<std::string>* e) {
 void RouteNetwork::clearBlocked() {
     blockedNodes.clear();
     blockedEdges.clear();
+}
+
+void RouteNetwork::showLocationInfoById(std::string const&  id) {
+    Location* loc = getLocationById(std::stoi(id));
+    if ( loc == nullptr) {
+        std::cout << "Location " << id << " does not exist" << std::endl;
+    }
+    else {
+        loc->printInfo();
+    }
+}
+
+void RouteNetwork::showLocationInfoByCode(std::string const&  code) {
+    Location* loc = getLocationByCode(code);
+    if ( loc == nullptr) {
+        std::cout << "Location " << code << " does not exist" << std::endl;
+    }
+    else {
+        loc->printInfo();
+    }
+}
+
+void RouteNetwork::showLocationInfoByName(std::string const&  name) {
+    Location* loc = getLocationByName(name);
+    if ( loc == nullptr) {
+        std::cout << "Location " << name << " does not exist" << std::endl;
+    }
+    else {
+        loc->printInfo();
+    }
 }
 
 

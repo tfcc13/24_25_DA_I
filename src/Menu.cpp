@@ -83,7 +83,7 @@ void MainMenu::show() {
     std::cout << "(" << ++options << ") >> " << "Go to Locations  Menu" << std::endl;
     std::cout << "(" << ++options << ") >> " << "Go to Routes Menu" << std::endl;
     std::cout << "(" << ++options << ") >> " << "Process Input" << std::endl;
-    std::cout << "(0) >> Exit "<< std::endl;
+    std::cout << "(0) >> Go back "  << "Exit" << std::endl;
 }
 
 Menu *MainMenu::getNextMenu() {
@@ -100,6 +100,7 @@ Menu *MainMenu::getNextMenu() {
         }
         case 2: {
             // to implement
+            break;
         }
         case 3: {
             return new InputMenu(route_network_);
@@ -116,7 +117,8 @@ void LocationMenu::show() {
     int options = 0;
     std::cout << "(" << ++options << ") >> " << "Check the size of the network" << std::endl;
     std::cout << "(" << ++options << ") >> " << "Check all the locations of the network" << std::endl;
-    std::cout << "(0) >> Exit "<< std::endl;
+    std::cout << "(" << ++options << ") >> " << "Check a Location Info" << std::endl;
+    std::cout << "(0) >> Go back "<< std::endl;
 }
 
 Menu *LocationMenu::getNextMenu() {
@@ -140,6 +142,9 @@ Menu *LocationMenu::getNextMenu() {
                 std::cout << location.second->getCode() << " " << location.second->getName() << " " << location.second->getAdj().size() <<  std::endl;
             }
             break;
+        }
+        case 3: {
+            return new LocationInfoMenu(route_network_);
         }
     }
 
@@ -178,7 +183,7 @@ void InputMenu::show() {
     }
 
 
-    std::cout << "(0) >> Exit "<< std::endl;
+    std::cout << "(0) >> Go back "<< std::endl;
 }
 
 
@@ -212,3 +217,50 @@ Menu *InputMenu::getNextMenu() {
 
 
 
+
+LocationInfoMenu::LocationInfoMenu(RouteNetwork &network) : Menu(network) {}
+
+void LocationInfoMenu::show() {
+    std::cout << CLEAR;
+    int options = 0;
+
+    std::cout << "(" << ++options << ") >> " << "Get location info by ID" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get location info by code" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get location info by name" << std::endl;
+    std::cout << "(0) >> Go back "<< std::endl;
+}
+
+
+
+Menu *LocationInfoMenu::getNextMenu() {
+    int option;
+    if(!InputHandler::get(option)) {
+        return invalidInput();
+    }
+
+    std::string input;
+    switch (option) {
+        case 0: {
+            return nullptr;
+        }
+        case 1: {
+            std::cout << "Please introduce the location ID." << std::endl;
+            input = InputHandler::getInput();
+            route_network_.showLocationInfoById(input);
+        } break;
+        case 2: {
+            std::cout << "Please introduce the location code." << std::endl;
+            input = InputHandler::getInput();
+            route_network_.showLocationInfoByCode(input);
+        }   break;
+        case 3: {
+            std::cout << "Please introduce the location name." << std::endl;
+            input = InputHandler::getInput();
+            route_network_.showLocationInfoByName(input);
+        } break;
+    }
+
+    InputHandler::waitForInput();
+
+    return this;
+}

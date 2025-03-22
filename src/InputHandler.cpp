@@ -30,6 +30,20 @@ std::string InputHandler::getInputLine() {
     return input;
 }
 
+std::string InputHandler::toLowerString(const std::string& input) {
+    std::string lowerStr = input;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return lowerStr;
+}
+
+std::string InputHandler::toUpperString(const std::string& input) {
+    std::string lowerStr = input;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
+                   [](unsigned char c) { return std::toupper(c); });
+    return lowerStr;
+}
+
 Request InputHandler::parseInputFile(const std::string& filepath) {
     Request route;
     std::ifstream file(filepath);

@@ -56,4 +56,11 @@ class InputMenu : public Menu {
     Menu *getNextMenu() override;
 };
 
+class LocationInfoMenu : public Menu {
+public:
+    LocationInfoMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
 #endif //MENU_H

@@ -35,3 +35,15 @@ void Location::setCanPark(bool canPark) {
     canPark_ = canPark;
 }
 
+void Location::printInfo() {
+    std::cout << "Location ID: "<< id_ << std::endl;
+    std::cout << "Location Name: "<< name_ << std::endl;
+    std::cout << "Location Code: "<< code_ << std::endl;
+    if (canPark_) {
+        std::cout << "Can park in this location" << std::endl;
+    }
+    else {
+        std::cout << "Can't park in this location" << std::endl;
+    }
+}
+
