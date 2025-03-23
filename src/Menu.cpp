@@ -99,7 +99,7 @@ Menu *MainMenu::getNextMenu() {
             return new LocationMenu(route_network_);
         }
         case 2: {
-            // to implement
+            return  new RouteMenu(route_network_);
             break;
         }
         case 3: {
@@ -247,6 +247,62 @@ Menu *LocationInfoMenu::getNextMenu() {
             std::cout << "Please introduce the location ID." << std::endl;
             input = InputHandler::getInput();
             route_network_.showLocationInfoById(input);
+        } break;
+        case 2: {
+            std::cout << "Please introduce the location code." << std::endl;
+            input = InputHandler::getInput();
+            route_network_.showLocationInfoByCode(input);
+        }   break;
+        case 3: {
+            std::cout << "Please introduce the location name." << std::endl;
+            input = InputHandler::getInput();
+            route_network_.showLocationInfoByName(input);
+        } break;
+    }
+
+    InputHandler::waitForInput();
+
+    return this;
+}
+
+
+
+RouteMenu::RouteMenu(RouteNetwork &network) : Menu(network) {}
+
+void RouteMenu::show() {
+    std::cout << CLEAR;
+    int options = 0;
+
+    std::cout << "(" << ++options << ") >> " << "Get unrestricted route from source to destination by ID" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get unrestricted route from source to destination by code  TO IMPLEMENT" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get unrestricted route from source to destination by name" << std::endl;
+    std::cout << "(0) >> Go back "<< std::endl;
+}
+
+
+
+Menu *RouteMenu::getNextMenu() {
+    int option;
+    if(!InputHandler::get(option)) {
+        return invalidInput();
+    }
+
+    std::string input;
+    switch (option) {
+        case 0: {
+            return nullptr;
+        }
+        case 1: {
+            std::cout << "Please introduce the source location ID." << std::endl;
+            input = InputHandler::getInput();
+            std::string source = input;
+
+            std::cout << "Please introduce the destination location ID." << std::endl;
+            input = InputHandler::getInput();
+            std::string dest = input;
+
+            route_network_.unrestrictedDrivingById(source, dest, route_network_);
+
         } break;
         case 2: {
             std::cout << "Please introduce the location code." << std::endl;

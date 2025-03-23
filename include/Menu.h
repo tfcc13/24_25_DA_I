@@ -63,4 +63,11 @@ public:
     Menu *getNextMenu() override;
 };
 
+class RouteMenu : public Menu {
+public:
+    RouteMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
 #endif //MENU_H

@@ -11,6 +11,8 @@
 #include "Graph.h"
 #include "Location.h"
 
+class RequestProcessor;
+
 class Location;
 
 class RouteNetwork : private Graph<std::string> {
@@ -45,6 +47,8 @@ public:
     void showLocationInfoById(std::string const&  id);
     void showLocationInfoByCode(std::string const&  code);
     void showLocationInfoByName(std::string const&  name);
+    void unrestrictedDrivingById(const std::string &src, const std::string &dest, RouteNetwork& route_network);
+
 };
 
 #endif //ROUTENETWORK_H

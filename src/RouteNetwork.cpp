@@ -230,4 +230,21 @@ void RouteNetwork::showLocationInfoByName(std::string const&  name) {
     }
 }
 
+void RouteNetwork::unrestrictedDrivingById(const std::string &src, const std::string &dest, RouteNetwork& route_network) {
+    int src_id = std::stoi(src);
+    int dest_id = std::stoi(dest);
+    if (getLocationById(src_id) == nullptr  || getLocationById(dest_id) == nullptr) {
+        std::cout << "Source " << src_id << " or destination " << dest_id << " don't exist." << std::endl;
+        return;
+    }
+
+    Request request;
+    request.mode = "driving";
+    request.src = src_id;
+    request.dest = dest_id;
+
+    RequestProcessor::processRequest(request, route_network);
+
+}
+
 
