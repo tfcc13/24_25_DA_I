@@ -66,7 +66,11 @@ class InputHandler {
      * @param filepath Path to file to read input
      * @return Request with given values in read file
      */
-    static Request parseInputFile(const std::string& filepath);
+    static Request parseInputFile(const std::string& filepath, bool &correct);
+
+    static void parseDriving(Request &request, std::string key, std::string value, int index, bool &correct);
+    static void parseDrivingWalking(Request &request, std::string key, std::string value, int index, bool &correct);
+
 
 
 };

@@ -168,6 +168,12 @@ void InputMenu::show() {
             }
         }
 
+        if (files.empty()) {
+            std::cout << "No files found in input directory\n"
+            << "Insert input files in the input folder\n";
+            return;
+        }
+
         std::sort(files.begin(), files.end());
 
         for (const auto &file : files) {
@@ -202,8 +208,13 @@ Menu *InputMenu::getNextMenu() {
     if (option == 0) return nullptr;
 
     std::string filepath = directory + files[option - 1].string();
-    Request r = InputHandler::parseInputFile(filepath);
-    RequestProcessor::processRequest(r, route_network_);
+    bool correctFile = true;
+    Request r = InputHandler::parseInputFile(filepath, correctFile);
+
+    if (correctFile) {
+        RequestProcessor::processRequest(r, route_network_);
+    }
+    else std::cout << "Input file not within predefined standards" << std::endl;
 
     InputHandler::waitForInput();
 
