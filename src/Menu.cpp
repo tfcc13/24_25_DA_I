@@ -139,7 +139,7 @@ Menu *LocationMenu::getNextMenu() {
         }
         case 2: {
             for (const auto& location : *route_network_.getLocations()) {
-                std::cout << location.second->getCode() << " " << location.second->getName() << " " << location.second->getAdj().size() <<  std::endl;
+                std::cout << location.second->getId() << " " << location.second->getCode() << " " << location.second->getName() << " " << location.second->getAdj().size() <<  std::endl;
             }
             break;
         }
@@ -320,6 +320,7 @@ Menu *RouteMenu::getNextMenu() {
             input = InputHandler::getInput();
             std::string source = input;
 
+
             std::cout << "Please introduce the destination location code." << std::endl;
             input = InputHandler::getInput();
             std::string dest = input;
@@ -328,9 +329,17 @@ Menu *RouteMenu::getNextMenu() {
 
         }   break;
         case 3: {
-            std::cout << "Please introduce the location name." << std::endl;
+            std::cout << "Please introduce the source location name." << std::endl;
             input = InputHandler::getInput();
-            route_network_.showLocationInfoByName(input);
+            std::string source = input;
+
+
+            std::cout << "Please introduce the destination location name." << std::endl;
+            input = InputHandler::getInput();
+            std::string dest = input;
+
+            route_network_.unrestrictedDrivingByName(source, dest, route_network_);
+
         } break;
     }
 

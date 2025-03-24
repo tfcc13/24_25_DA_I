@@ -31,7 +31,7 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
     std::vector<Location*> v;
 
     v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
-    printSimplePath(v, w);
+    printSimplePath(v, w, call_mode);
 
     if (v.empty()) return;
 
@@ -44,7 +44,7 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
 
     w=0;
     v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
-    printSimplePath(v, w);
+    printSimplePath(v, w, call_mode);
     route_network.clearBlocked();
 
 }
@@ -66,7 +66,7 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
     std::vector<Location*> v;
     if (request.includeNode == -1) {
         v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
-        printSimplePath(v, w);
+        printSimplePath(v, w, call_mode);
         route_network.clearBlocked();
         return;
     }
@@ -83,7 +83,7 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
     }
 
     std::vector<Location*> path = mergeIncludePaths(v, v2);
-    printSimplePath(path, w);
+    printSimplePath(path, w, call_mode);
 
 }
 
@@ -157,14 +157,14 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
     }
 
     std::vector<Location*> v1 = drivingPath[bestParking].path;
-    printSimplePath(v1, drivingPath[bestParking].dist);
+    printSimplePath(v1, drivingPath[bestParking].dist, call_mode);
 
     std::cout << "Parking Node:" << bestParking->getId() << std::endl;
 
     std::cout << "WalkingRoute:";
     std::vector<Location*> v2 = walkingPath[bestParking].path;
     reverse(v2.begin(), v2.end());
-    printSimplePath(v2, walkingPath[bestParking].dist);
+    printSimplePath(v2, walkingPath[bestParking].dist, call_mode);
 
     std::cout << "TotalTime:" << minTotalTime << std::endl;
 

@@ -8,6 +8,7 @@
 #include "RequestProcessor.h"
 #include "../data_structures/MutablePriorityQueue.h"
 #include <stack>
+#include <sstream>
 
 inline bool relax(Edge<std::string>* route, bool isDriving) {
     auto u = route->getOrig();
@@ -85,13 +86,40 @@ inline std::vector<Location*> getVectorPath(RouteNetwork *rn, const int &origin,
 }
 
 
-inline void printSimplePath(std::vector<Location*> v, double weight) {
+inline void printSimplePath(std::vector<Location*> v, double weight, int call_mode) {
     if (v.empty()) {
         std::cout << "none\n";
         return;
     }
-    for (auto s : v) std::cout << s->getId() <<",";
-    std::cout << "(" << weight << ")\n";
+
+    std::ostringstream output;
+
+
+    for (auto s : v) {
+        switch (call_mode) {
+            case ID_MODE: {
+                output << s->getId() <<",";
+                break;
+            }
+            case CODE_MODE: {
+                output << s->getCode() <<",";
+                break;
+            }
+            case NAME_MODE: {
+                output << s->getName() <<",";
+                break;
+            }
+        }
+
+    }
+
+    std::string result = output.str();
+    if (!result.empty()) {
+        result.pop_back();  // Remove the last comma
+    }
+    std::cout << result << "(" << weight << ")\n";
+
+
 }
 
 inline std::vector<Location*> getPath(RouteNetwork *rn, int source, int dest, double &weight, bool mode) {

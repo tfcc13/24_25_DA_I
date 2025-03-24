@@ -52,6 +52,7 @@ public:
     void showLocationInfoByName(std::string const&  name);
     void unrestrictedDrivingById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode);
     void unrestrictedDrivingByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network);
+    void unrestrictedDrivingByName(const std::string &src, const std::string &dest, RouteNetwork& route_network);
 
 };
 

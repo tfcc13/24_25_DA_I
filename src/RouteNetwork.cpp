@@ -260,4 +260,16 @@ void RouteNetwork::unrestrictedDrivingByCode(const std::string &src, const std::
 
 }
 
+void RouteNetwork::unrestrictedDrivingByName(const std::string &src, const std::string &dest, RouteNetwork& route_network) {
+    auto src_loc = getLocationByName(src);
+    auto dest_loc = getLocationByName(dest);
+
+    if (src_loc == nullptr  || dest_loc == nullptr) {
+        std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
+        return;
+    }
+
+    unrestrictedDrivingById(src_loc->getId(), dest_loc->getId(), route_network, NAME_MODE);
+
+}
 
