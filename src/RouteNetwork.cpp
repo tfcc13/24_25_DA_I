@@ -230,11 +230,11 @@ void RouteNetwork::showLocationInfoByName(std::string const&  name) {
     }
 }
 
-void RouteNetwork::unrestrictedDrivingById(const std::string &src, const std::string &dest, RouteNetwork& route_network) {
+void RouteNetwork::unrestrictedDrivingById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode) {
     int src_id = std::stoi(src);
     int dest_id = std::stoi(dest);
     if (getLocationById(src_id) == nullptr  || getLocationById(dest_id) == nullptr) {
-        std::cout << "Source " << src_id << " or destination " << dest_id << " don't exist." << std::endl;
+        std::cout << "Source " << src_id << " or destination " << dest_id << " doesn't exist." << std::endl;
         return;
     }
 
@@ -243,7 +243,20 @@ void RouteNetwork::unrestrictedDrivingById(const std::string &src, const std::st
     request.src = src_id;
     request.dest = dest_id;
 
-    RequestProcessor::processRequest(request, route_network);
+    RequestProcessor::processRequest(request, route_network, call_mode );
+
+}
+
+void RouteNetwork::unrestrictedDrivingByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network) {
+    auto src_loc = getLocationByCode(src);
+    auto dest_loc = getLocationByCode(dest);
+
+    if (src_loc == nullptr  || dest_loc == nullptr) {
+        std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
+        return;
+    }
+
+    unrestrictedDrivingById(src_loc->getId(), dest_loc->getId(), route_network, CODE_MODE);
 
 }
 

@@ -217,7 +217,7 @@ Menu *InputMenu::getNextMenu() {
     Request r = InputHandler::parseInputFile(filepath, correctFile);
 
     if (correctFile) {
-        RequestProcessor::processRequest(r, route_network_);
+        RequestProcessor::processRequest(r, route_network_, ID_MODE);
     }
     else std::cout << "Input file not within predefined standards" << std::endl;
 
@@ -312,13 +312,20 @@ Menu *RouteMenu::getNextMenu() {
             input = InputHandler::getInput();
             std::string dest = input;
 
-            route_network_.unrestrictedDrivingById(source, dest, route_network_);
+            route_network_.unrestrictedDrivingById(source, dest, route_network_, ID_MODE);
 
         } break;
         case 2: {
-            std::cout << "Please introduce the location code." << std::endl;
+            std::cout << "Please introduce the source location code." << std::endl;
             input = InputHandler::getInput();
-            route_network_.showLocationInfoByCode(input);
+            std::string source = input;
+
+            std::cout << "Please introduce the destination location code." << std::endl;
+            input = InputHandler::getInput();
+            std::string dest = input;
+
+            route_network_.unrestrictedDrivingByCode(source, dest, route_network_);
+
         }   break;
         case 3: {
             std::cout << "Please introduce the location name." << std::endl;

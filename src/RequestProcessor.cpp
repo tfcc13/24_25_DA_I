@@ -11,24 +11,24 @@
 #define DRIVING_MODE 1
 #define WALKING_MODE 0
 
-void RequestProcessor::processRequest(Request &request, RouteNetwork &route_network) {
+void RequestProcessor::processRequest(Request &request, RouteNetwork &route_network, int call_mode) {
     if (request.mode == "driving") {
         if (!request.avoidNodes.empty() || !request.avoidSegments.empty() || request.includeNode >= 0) {
-            processRestrictedDriving(request, route_network);
+            processRestrictedDriving(request, route_network, call_mode);
         }
-        else processUnrestrictedDriving(request, route_network);
+        else processUnrestrictedDriving(request, route_network, call_mode);
     }
-    else if (request.mode == "driving-walking") processDrivingWalking(request, route_network);
+    else if (request.mode == "driving-walking") processDrivingWalking(request, route_network, call_mode);
     else std::cout << "Invalid input format\n";
 }
 
-void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork &route_network) {
+void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode) {
     std::cout << "Source:" << request.src << std::endl
     << "Destination:" << request.dest << std::endl
     << "BestDrivingRoute:" ;
 
     double w=0;
-    std::vector<std::string> v;
+    std::vector<Location*> v;
 
     v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
     printSimplePath(v, w);
@@ -37,7 +37,7 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
 
     //block intermediate blocks
     for (int i = 1; i < int(v.size())-1; i++) {
-        route_network.blockNode(std::stoi(v[i]));
+        route_network.blockNode(std::stoi(v[i]->getId()));
     }
 
     std::cout << "AlternativeDrivingRoute:";
@@ -49,7 +49,7 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
 
 }
 
-void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &route_network) {
+void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode) {
     std::cout << "Source:" << request.src << std::endl
     << "Destination:" << request.dest << std::endl
     << "RestrictedDrivingRoute:" ;
@@ -63,7 +63,7 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
     }
 
     double w=0;
-    std::vector<std::string> v;
+    std::vector<Location*> v;
     if (request.includeNode == -1) {
         v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
         printSimplePath(v, w);
@@ -74,7 +74,7 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
     route_network.clearBlocked();
 
     w=0;
-    std::vector<std::string> v2;
+    std::vector<Location*> v2;
     v = getPath(&route_network, request.src, request.includeNode, w, DRIVING_MODE);
     v2 = getPath(&route_network, request.includeNode, request.dest, w, DRIVING_MODE);
     if (v.empty() || v2.empty()) {
@@ -82,7 +82,7 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
         return;
     }
 
-    std::vector<std::string> path = mergeIncludePaths(v, v2);
+    std::vector<Location*> path = mergeIncludePaths(v, v2);
     printSimplePath(path, w);
 
 }
@@ -91,10 +91,10 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
 
 typedef struct {
     double dist;
-    std::vector<std::string> path;
+    std::vector<Location*> path;
 } Path;
 
-void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &route_network) {
+void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &route_network, int call_mode) {
     if (!request.avoidNodes.empty() || !request.avoidSegments.empty()) {
         for (int id : request.avoidNodes) route_network.blockNode(id);
         for (std::pair<int, int> p : request.avoidSegments) {
@@ -156,13 +156,13 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
         return;
     }
 
-    std::vector<std::string> v1 = drivingPath[bestParking].path;
+    std::vector<Location*> v1 = drivingPath[bestParking].path;
     printSimplePath(v1, drivingPath[bestParking].dist);
 
     std::cout << "Parking Node:" << bestParking->getId() << std::endl;
 
     std::cout << "WalkingRoute:";
-    std::vector<std::string> v2 = walkingPath[bestParking].path;
+    std::vector<Location*> v2 = walkingPath[bestParking].path;
     reverse(v2.begin(), v2.end());
     printSimplePath(v2, walkingPath[bestParking].dist);
 

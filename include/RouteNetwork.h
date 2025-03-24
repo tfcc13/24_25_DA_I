@@ -7,9 +7,12 @@
 
 #include <unordered_map>
 #include <unordered_set>
-
 #include "Graph.h"
 #include "Location.h"
+
+#define ID_MODE 0
+#define CODE_MODE 1
+#define NAME_MODE 2
 
 class RequestProcessor;
 
@@ -47,7 +50,8 @@ public:
     void showLocationInfoById(std::string const&  id);
     void showLocationInfoByCode(std::string const&  code);
     void showLocationInfoByName(std::string const&  name);
-    void unrestrictedDrivingById(const std::string &src, const std::string &dest, RouteNetwork& route_network);
+    void unrestrictedDrivingById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode);
+    void unrestrictedDrivingByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network);
 
 };
 

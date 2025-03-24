@@ -28,10 +28,10 @@ public:
      *@param request a request
      *@param route_network the target network
      */
-    static void processRequest(Request &request, RouteNetwork &route_network);
-    static void processUnrestrictedDriving(Request &request, RouteNetwork &route_network);
-    static void processRestrictedDriving(Request &request, RouteNetwork &route_network);
-    static void processDrivingWalking(Request &request, RouteNetwork &route_network);
+    static void processRequest(Request &request, RouteNetwork &route_network, int call_mode);
+    static void processUnrestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode);
+    static void processRestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode);
+    static void processDrivingWalking(Request &request, RouteNetwork &route_network, int call_mode);
 };
 
 
