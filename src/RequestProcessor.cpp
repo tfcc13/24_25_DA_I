@@ -8,8 +8,6 @@
 #include <iostream>
 #include <ostream>
 
-#define DRIVING_MODE 1
-#define WALKING_MODE 0
 
 void RequestProcessor::processRequest(Request &request, RouteNetwork &route_network, int call_mode) {
     if (request.mode == "driving") {

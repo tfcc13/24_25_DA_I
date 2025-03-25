@@ -230,7 +230,7 @@ void RouteNetwork::showLocationInfoByName(std::string const&  name) {
     }
 }
 
-void RouteNetwork::unrestrictedDrivingById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode) {
+void RouteNetwork::routeById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode, int route_mode) {
     int src_id = std::stoi(src);
     int dest_id = std::stoi(dest);
     if (getLocationById(src_id) == nullptr  || getLocationById(dest_id) == nullptr) {
@@ -239,7 +239,15 @@ void RouteNetwork::unrestrictedDrivingById(const std::string &src, const std::st
     }
 
     Request request;
-    request.mode = "driving";
+
+    if (route_mode == DRIVING_MODE) {
+        request.mode = "driving";
+    }
+    else {
+        request.mode = "driving-walking";
+    }
+
+
     request.src = src_id;
     request.dest = dest_id;
 
@@ -247,7 +255,7 @@ void RouteNetwork::unrestrictedDrivingById(const std::string &src, const std::st
 
 }
 
-void RouteNetwork::unrestrictedDrivingByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network) {
+void RouteNetwork::routeByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode) {
     auto src_loc = getLocationByCode(src);
     auto dest_loc = getLocationByCode(dest);
 
@@ -256,11 +264,11 @@ void RouteNetwork::unrestrictedDrivingByCode(const std::string &src, const std::
         return;
     }
 
-    unrestrictedDrivingById(src_loc->getId(), dest_loc->getId(), route_network, CODE_MODE);
+    routeById(src_loc->getId(), dest_loc->getId(), route_network, CODE_MODE, route_mode);
 
 }
 
-void RouteNetwork::unrestrictedDrivingByName(const std::string &src, const std::string &dest, RouteNetwork& route_network) {
+void RouteNetwork::routeByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode) {
     auto src_loc = getLocationByName(src);
     auto dest_loc = getLocationByName(dest);
 
@@ -269,7 +277,7 @@ void RouteNetwork::unrestrictedDrivingByName(const std::string &src, const std::
         return;
     }
 
-    unrestrictedDrivingById(src_loc->getId(), dest_loc->getId(), route_network, NAME_MODE);
+    routeById(src_loc->getId(), dest_loc->getId(), route_network, NAME_MODE, route_mode);
 
 }
 

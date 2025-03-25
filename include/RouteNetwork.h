@@ -14,6 +14,9 @@
 #define CODE_MODE 1
 #define NAME_MODE 2
 
+#define DRIVING_MODE 1
+#define WALKING_MODE 0
+
 class RequestProcessor;
 
 class Location;
@@ -50,9 +53,10 @@ public:
     void showLocationInfoById(std::string const&  id);
     void showLocationInfoByCode(std::string const&  code);
     void showLocationInfoByName(std::string const&  name);
-    void unrestrictedDrivingById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode);
-    void unrestrictedDrivingByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network);
-    void unrestrictedDrivingByName(const std::string &src, const std::string &dest, RouteNetwork& route_network);
+    void routeById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode, int route_mode);
+    void routeByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode);
+    void routeByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode);
+
 
 };
 

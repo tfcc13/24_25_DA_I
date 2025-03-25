@@ -284,9 +284,9 @@ void RouteMenu::show() {
     std::cout << CLEAR;
     int options = 0;
 
-    std::cout << "(" << ++options << ") >> " << "Get unrestricted route from source to destination by ID" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get unrestricted route from source to destination by code  TO IMPLEMENT" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get unrestricted route from source to destination by name" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get unrestricted driving route from source to destination by ID" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get unrestricted driving from source to destination by code  TO IMPLEMENT" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get unrestricted driving from source to destination by name" << std::endl;
     std::cout << "(0) >> Go back "<< std::endl;
 }
 
@@ -312,7 +312,7 @@ Menu *RouteMenu::getNextMenu() {
             input = InputHandler::getInput();
             std::string dest = input;
 
-            route_network_.unrestrictedDrivingById(source, dest, route_network_, ID_MODE);
+            route_network_.routeById(source, dest, route_network_, ID_MODE, DRIVING_MODE);
 
         } break;
         case 2: {
@@ -325,7 +325,7 @@ Menu *RouteMenu::getNextMenu() {
             input = InputHandler::getInput();
             std::string dest = input;
 
-            route_network_.unrestrictedDrivingByCode(source, dest, route_network_);
+            route_network_.routeByCode(source, dest, route_network_, DRIVING_MODE);
 
         }   break;
         case 3: {
@@ -338,9 +338,10 @@ Menu *RouteMenu::getNextMenu() {
             input = InputHandler::getInput();
             std::string dest = input;
 
-            route_network_.unrestrictedDrivingByName(source, dest, route_network_);
+            route_network_.routeByName(source, dest, route_network_, DRIVING_MODE);
 
         } break;
+
     }
 
     InputHandler::waitForInput();
