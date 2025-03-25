@@ -13,7 +13,9 @@ class InputHandler {
 
     public:
 
-    /// Ignores an input after pressing the key enter
+    /**
+     *@brief Ignores an input after pressing the key enter
+     */
     static void waitForInput();
 
     /**
@@ -60,10 +62,19 @@ class InputHandler {
         return convertStrToVar(str, var);
     }
 
+    /**
+    * @brief Converts a string to lowercase.
+    * @param input The input string.
+    * @return A new string with all characters converted to lowercase.
+    */
     static std::string toLowerString(const std::string& input);
+
+    /**
+    * @brief Converts a string to uppercase.
+    * @param input The input string.
+    * @return A new string with all characters converted to uppercase.
+    */
     static std::string toUpperString(const std::string& input);
-
-
 
     /**
      * @brief Reads from file and transforms into Request
@@ -72,12 +83,25 @@ class InputHandler {
      */
     static Request parseInputFile(const std::string& filepath, bool &correct);
 
+    /**
+    * @brief Parses driving-related request parameters from key-value pairs.
+    * @param route The request object to be populated.
+    * @param key The key representing the request parameter.
+    * @param value The value associated with the key.
+    * @param idx The index of the parameter in the input data.
+    * @param correct A reference to a boolean that indicates whether parsing was successful.
+    */
     static void parseDriving(Request &request, std::string key, std::string value, int index, bool &correct);
+
+    /**
+    * @brief Parses driving-walking request parameters from key-value pairs.
+    * @param route The request object to be populated.
+    * @param key The key representing the request parameter.
+    * @param value The value associated with the key.
+    * @param idx The index of the parameter in the input data.
+    * @param correct A reference to a boolean that indicates whether parsing was successful.
+    */
     static void parseDrivingWalking(Request &request, std::string key, std::string value, int index, bool &correct);
-
-
-
-
 
 };
 #endif //INPUTHANDLER_H

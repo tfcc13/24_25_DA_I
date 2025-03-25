@@ -10,6 +10,12 @@
 #include <stack>
 #include <sstream>
 
+/**
+* @brief Relaxes an edge in the shortest path algorithm.
+* @param route Pointer to the edge being evaluated.
+* @param isDriving Boolean flag indicating whether to use driving time or walking time.
+* @return True if the relaxation was successful, otherwise false.
+*/
 inline bool relax(Edge<std::string>* route, bool isDriving) {
     auto u = route->getOrig();
     auto v = route->getDest();
@@ -31,6 +37,12 @@ inline bool relax(Edge<std::string>* route, bool isDriving) {
 
 }
 
+/**
+* @brief Runs Dijkstra's algorithm on the given RouteNetwork.
+* @param rn Pointer to the RouteNetwork.
+* @param src_id The ID of the source location.
+* @param mode Boolean flag indicating whether to use driving mode (true) or walking mode (false).
+*/
 inline void dijkstra(RouteNetwork* rn, int src_id, bool mode) {
     for (auto& p : rn->getLocationSet() ){
         p->setDist(INT_MAX);
@@ -61,7 +73,15 @@ inline void dijkstra(RouteNetwork* rn, int src_id, bool mode) {
     }
 }
 
-//change weight to double
+/**
+* @brief Retrieves the shortest path as a vector of locations.
+* @param rn Pointer to the RouteNetwork.
+* @param origin The origin location ID.
+* @param dest The destination location ID.
+* @param weight Reference to a double storing the total path weight.
+* @param isDriving Boolean flag indicating whether to use driving time (true) or walking time (false).
+* @return A vector containing the locations that form the shortest path.
+*/
 inline std::vector<Location*> getVectorPath(RouteNetwork *rn, const int &origin, const int &dest, double &weight, bool isDriving) {
     Location *v = rn->getLocationById(dest);
     Location *org = rn->getLocationById(origin);
@@ -85,7 +105,12 @@ inline std::vector<Location*> getVectorPath(RouteNetwork *rn, const int &origin,
     return path;
 }
 
-
+/**
+* @brief Prints a simple representation of the path.
+* @param v The vector of locations representing the path.
+* @param weight The total weight of the path.
+* @param call_mode The mode used for displaying location information (ID, Code, or Name).
+*/
 inline void printSimplePath(std::vector<Location*> v, double weight, int call_mode) {
     if (v.empty()) {
         std::cout << "none\n";
@@ -122,11 +147,27 @@ inline void printSimplePath(std::vector<Location*> v, double weight, int call_mo
 
 }
 
+/**
+* @brief Computes the shortest path between two locations.
+* @param rn Pointer to the RouteNetwork.
+* @param source The source location ID.
+* @param dest The destination location ID.
+* @param weight Reference to a double storing the total path weight.
+* @param mode Boolean flag indicating whether to use driving mode (true) or walking mode (false).
+* @return A vector containing the locations that form the shortest path.
+*/
 inline std::vector<Location*> getPath(RouteNetwork *rn, int source, int dest, double &weight, bool mode) {
     dijkstra(rn, source, mode);
     return getVectorPath(rn, source, dest, weight, mode);
 }
 
+
+/**
+* @brief Merges two paths, ensuring the second path continues from the first.
+* @param v1 The first path as a vector of locations.
+* @param v2 The second path as a vector of locations.
+* @return A merged vector containing the combined path.
+*/
 inline std::vector<Location*> mergeIncludePaths(std::vector<Location*> v1, std::vector<Location*> v2) {
     std::vector<Location*> path;
     for (auto s : v1) path.push_back(s);
