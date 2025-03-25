@@ -53,9 +53,9 @@ public:
     void showLocationInfoById(std::string const&  id);
     void showLocationInfoByCode(std::string const&  code);
     void showLocationInfoByName(std::string const&  name);
-    void routeById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode, int route_mode);
-    void routeByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode);
-    void routeByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode);
+    void routeById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode, int route_mode, int max_walk_time =-1);
+    void routeByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode,int max_walk_time =-1);
+    void routeByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, int max_walk_time =-1);
 
 
 };

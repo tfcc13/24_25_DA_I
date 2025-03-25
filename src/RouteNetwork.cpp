@@ -230,7 +230,7 @@ void RouteNetwork::showLocationInfoByName(std::string const&  name) {
     }
 }
 
-void RouteNetwork::routeById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode, int route_mode) {
+void RouteNetwork::routeById(const std::string &src, const std::string &dest, RouteNetwork& route_network, int call_mode, int route_mode, int max_walk_time) {
     int src_id = std::stoi(src);
     int dest_id = std::stoi(dest);
     if (getLocationById(src_id) == nullptr  || getLocationById(dest_id) == nullptr) {
@@ -247,7 +247,7 @@ void RouteNetwork::routeById(const std::string &src, const std::string &dest, Ro
         request.mode = "driving-walking";
     }
 
-
+    request.maxWalkTime = max_walk_time;
     request.src = src_id;
     request.dest = dest_id;
 
@@ -255,7 +255,7 @@ void RouteNetwork::routeById(const std::string &src, const std::string &dest, Ro
 
 }
 
-void RouteNetwork::routeByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode) {
+void RouteNetwork::routeByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, int max_walk_time) {
     auto src_loc = getLocationByCode(src);
     auto dest_loc = getLocationByCode(dest);
 
@@ -264,11 +264,11 @@ void RouteNetwork::routeByCode(const std::string &src, const std::string &dest, 
         return;
     }
 
-    routeById(src_loc->getId(), dest_loc->getId(), route_network, CODE_MODE, route_mode);
+    routeById(src_loc->getId(), dest_loc->getId(), route_network, CODE_MODE, route_mode, max_walk_time);
 
 }
 
-void RouteNetwork::routeByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode) {
+void RouteNetwork::routeByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, int max_walk_time) {
     auto src_loc = getLocationByName(src);
     auto dest_loc = getLocationByName(dest);
 
@@ -277,7 +277,7 @@ void RouteNetwork::routeByName(const std::string &src, const std::string &dest, 
         return;
     }
 
-    routeById(src_loc->getId(), dest_loc->getId(), route_network, NAME_MODE, route_mode);
+    routeById(src_loc->getId(), dest_loc->getId(), route_network, NAME_MODE, route_mode, max_walk_time);
 
 }
 
