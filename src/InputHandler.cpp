@@ -30,6 +30,7 @@ std::string InputHandler::getInputLine() {
     return input;
 }
 
+
 std::string InputHandler::toLowerString(const std::string& input) {
     std::string lowerStr = input;
     std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),

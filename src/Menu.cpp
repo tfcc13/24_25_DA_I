@@ -308,14 +308,18 @@ Menu *RouteMenu::getNextMenu() {
         }
         case 1: {
             std::cout << "Please introduce the source location ID." << std::endl;
-            input = InputHandler::getInput();
-            std::string source = input;
-
+            int src;
+            if (!InputHandler::get(src)) {
+                return invalidInput();
+            }
             std::cout << "Please introduce the destination location ID." << std::endl;
-            input = InputHandler::getInput();
-            std::string dest = input;
 
-            route_network_.routeById(source, dest, route_network_, ID_MODE, DRIVING_MODE);
+            int dest;
+            if (!InputHandler::get(dest)) {
+                return invalidInput();
+            }
+
+            route_network_.routeById(src, dest, route_network_, ID_MODE, DRIVING_MODE);
 
         } break;
         case 2: {
@@ -347,19 +351,24 @@ Menu *RouteMenu::getNextMenu() {
 
         case 4: {
             std::cout << "Please introduce the source location ID." << std::endl;
-            input = InputHandler::getInput();
-            std::string source = input;
-
+            int src;
+            if (!InputHandler::get(src)) {
+                return invalidInput();
+            }
             std::cout << "Please introduce the destination location ID." << std::endl;
-            input = InputHandler::getInput();
-            std::string dest = input;
+
+            int dest;
+            if (!InputHandler::get(dest)) {
+                return invalidInput();
+            }
 
             std::cout << "Please introduce maximum walking time." << std::endl;
-            input = InputHandler::getInput();
-            int max_time = std::stoi(input);
+            int max_time;
+            if (!InputHandler::get(max_time)) {
+                return invalidInput();
+            }
 
-
-            route_network_.routeById(source, dest, route_network_, ID_MODE, WALKING_MODE,max_time);
+            route_network_.routeById(src, dest, route_network_, ID_MODE, WALKING_MODE,max_time);
 
         } break;
         case 5: {
@@ -373,8 +382,10 @@ Menu *RouteMenu::getNextMenu() {
             std::string dest = input;
 
             std::cout << "Please introduce maximum walking time." << std::endl;
-            input = InputHandler::getInput();
-            int max_time = std::stoi(input);
+            int max_time;
+            if (!InputHandler::get(max_time)) {
+                return invalidInput();
+            }
 
             route_network_.routeByCode(source, dest, route_network_, WALKING_MODE, max_time);
 
