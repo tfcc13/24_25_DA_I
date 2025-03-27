@@ -280,3 +280,59 @@ void RouteNetwork::routeByName(const std::string &src, const std::string &dest, 
 
 }
 
+void RouteNetwork::restrictedRouteById(int src, int dest, RouteNetwork& route_network, int call_mode, int route_mode, std::vector<int> avoid_nodes, std::vector<std::pair<int,int>> avoid_routes, int include_node, int max_walk_time) {
+
+    if (getLocationById(src) == nullptr  || getLocationById(dest) == nullptr) {
+        std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
+        return;
+    }
+
+    for (auto it = avoid_nodes.begin(); it != avoid_nodes.end(); it++) {
+        if (getLocationById(*it) == nullptr) {
+            std::cout << "Node to avoid number " << *it << " does not exist." << std::endl;
+            return;
+        }
+    }
+
+    for (auto it = avoid_routes.begin(); it != avoid_routes.end(); it++) {
+        int route_src = it->first;
+        int route_dest = it->second;
+
+        if (getLocationById(route_src) == nullptr  || getLocationById(route_dest) == nullptr) {
+            std::cout << "Route " << route_src << "-" << route_dest << " doesn't exist." << std::endl;
+            return;
+        }
+        bool is_dest = false;
+        Location* temp_loc = getLocationById(route_src);
+        for (auto edge : temp_loc->getAdj()) {
+            if (static_cast<Location*> (edge->getDest())->getId() == std::to_string(route_dest)) {
+                is_dest = true;
+            }
+        }
+
+        if (!is_dest) {
+            std::cout << "Route " << route_src << "-" << route_dest << " doesn't exist." << std::endl;
+            return;
+        }
+    }
+
+    Request request;
+
+    if (route_mode == DRIVING_MODE) {
+        request.mode = "driving";
+    }
+    else {
+        request.mode = "driving-walking";
+    }
+
+    request.maxWalkTime = max_walk_time;
+    request.src = src;
+    request.dest = dest;
+    request.avoidNodes = avoid_nodes;
+    request.avoidSegments = avoid_routes;
+    request.includeNode = include_node;
+
+    RequestProcessor::processRequest(request, route_network, call_mode );
+
+}
+

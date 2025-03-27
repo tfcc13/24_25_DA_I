@@ -103,5 +103,8 @@ class InputHandler {
     */
     static void parseDrivingWalking(Request &request, std::string key, std::string value, int index, bool &correct);
 
+    static std::vector<int> parseIntSepByComma(std::string input) ;
+    static std::pair<int, int> parseIntPair(std::string input) ;
+    static std::vector<std::pair<int,int>> parseIntPairSepByComma(std::string input) ;
 };
 #endif //INPUTHANDLER_H

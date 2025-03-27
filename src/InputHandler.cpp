@@ -197,3 +197,72 @@ Request InputHandler::parseInputFile(const std::string& filepath, bool &correct)
     file.close();
     return route;
 }
+
+ std::vector<int> InputHandler::parseIntSepByComma(std::string input) {
+    std::vector<int> avoidLocations;
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use '1,2,3' format.\n";
+        return avoidLocations;
+    }
+
+    std::istringstream ss(input);
+    std::string token;
+
+    while (std::getline(ss, token, ',')) {
+        try {
+            avoidLocations.push_back(std::stoi(token)); // Convert to int
+        } catch (const std::invalid_argument&) {
+            std::cerr << "Invalid number detected: '" << token << "'. Skipping.\n";
+            avoidLocations.clear();
+            return avoidLocations;
+        }
+    }
+
+    return avoidLocations;
+}
+
+std::pair<int, int> InputHandler::parseIntPair(std::string input) {
+    size_t pos = input.find('-');
+    if (pos == std::string::npos) {
+        std::cerr << "Invalid input: Expected format 'X-Y' (e.g., '1-2').\n";
+        return {-1, -1};
+    }
+
+    try {
+        int first = std::stoi(input.substr(0, pos));
+        int second = std::stoi(input.substr(pos + 1));
+        return {first, second};
+    } catch (const std::invalid_argument&) {
+        std::cerr << "Invalid input: Non-numeric values found.\n";
+    } catch (const std::out_of_range&) {
+        std::cerr << "Invalid input: Number out of range.\n";
+    }
+
+    return {-1, -1};
+
+}
+
+std::vector<std::pair<int,int>> InputHandler::parseIntPairSepByComma(std::string input) {
+    std::vector<std::pair<int, int>> pairs;
+
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use '1_2,3_4,2_5' format.\n";
+        return pairs;
+    }
+
+    std::stringstream ss(input);
+    std::string pairStr;
+
+    while (std::getline(ss, pairStr, ',')) {
+        auto parsedPair = parseIntPair(pairStr);
+        if (parsedPair.first == parsedPair.second && parsedPair.first == -1) {
+            pairs.clear();
+            return pairs;
+        }
+        pairs.push_back(parsedPair);
+    }
+
+    return pairs;
+
+}
+

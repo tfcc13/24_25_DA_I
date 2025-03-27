@@ -167,7 +167,7 @@ public:
     void routeById(int src, int dest, RouteNetwork& route_network, int call_mode, int route_mode, int max_walk_time =-1);
     void routeByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode,int max_walk_time =-1);
     void routeByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, int max_walk_time =-1);
-
+    void restrictedRouteById(int src, int dest, RouteNetwork& route_network, int call_mode, int route_mode, std::vector<int> avoid_nodes, std::vector<std::pair<int,int>> avoid_routes,  int include_node = -1,  int max_walk_time =-1);
 
 };
 
