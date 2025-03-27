@@ -448,7 +448,7 @@ Menu *RouteMenu::getNextMenu() {
             input = InputHandler::getInput();
 
             if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
-                std::cout <<  "Please enter the source and destination IDs to avoid, separated by an hifen ('-') and listed without spaces, using commas between pairs (e.g., '1_2,3_4,3_5')." << std::endl;
+                std::cout <<  "Please enter the source and destination IDs to avoid, separated by an hifen ('-') and listed without spaces, using commas between pairs (e.g., '1-2,3-4,3-5')." << std::endl;
                 input = InputHandler::getInput();
                 avoidRoute = InputHandler::parseIntPairSepByComma(input);
                 if (avoidRoute.empty()) {
@@ -511,7 +511,7 @@ Menu *RouteMenu::getNextMenu() {
             input = InputHandler::getInput();
 
             if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
-                std::cout <<  "Please enter the source and destination IDs to avoid, separated by an hifen ('-') and listed without spaces, using commas between pairs (e.g., '1_2,3_4,3_5')." << std::endl;
+                std::cout <<  "Please enter the source and destination IDs to avoid, separated by an hifen ('-') and listed without spaces, using commas between pairs (e.g., '1-2,3-4,3-5')." << std::endl;
                 input = InputHandler::getInput();
                 avoidRoute = InputHandler::parseIntPairSepByComma(input);
                 if (avoidRoute.empty()) {
