@@ -21,9 +21,28 @@ void RequestProcessor::processRequest(Request &request, RouteNetwork &route_netw
 }
 
 void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode) {
-    std::cout << "Source:" << request.src << std::endl
-    << "Destination:" << request.dest << std::endl
-    << "BestDrivingRoute:" ;
+
+
+    switch (call_mode) {
+        case ID_MODE: {
+            std::cout << "Source:" << request.src << std::endl
+            << "Destination:" << request.dest << std::endl;
+            break;
+        }
+        case CODE_MODE: {
+            std::cout << "Source:" << route_network.getLocationById(request.src)->getCode() << std::endl
+            << "Destination:" <<  route_network.getLocationById(request.dest)->getCode() << std::endl;
+            break;
+        }
+        case NAME_MODE: {
+            std::cout << "Source:" << route_network.getLocationById(request.src)->getName() << std::endl
+            << "Destination:" <<  route_network.getLocationById(request.dest)->getName() << std::endl;
+            break;
+        }
+    }
+
+    std::cout << "BestDrivingRoute:" ;
+
 
     double w=0;
     std::vector<Location*> v;
@@ -48,9 +67,24 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
 }
 
 void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode) {
-    std::cout << "Source:" << request.src << std::endl
-    << "Destination:" << request.dest << std::endl
-    << "RestrictedDrivingRoute:" ;
+    switch (call_mode) {
+        case ID_MODE: {
+            std::cout << "Source:" << request.src << std::endl
+            << "Destination:" << request.dest << std::endl;
+            break;
+        }
+        case CODE_MODE: {
+            std::cout << "Source:" << route_network.getLocationById(request.src)->getCode() << std::endl
+            << "Destination:" <<  route_network.getLocationById(request.dest)->getCode() << std::endl;
+            break;
+        }
+        case NAME_MODE: {
+            std::cout << "Source:" << route_network.getLocationById(request.src)->getName() << std::endl
+            << "Destination:" <<  route_network.getLocationById(request.dest)->getName() << std::endl;
+            break;
+        }
+    }
+    std::cout<< "RestrictedDrivingRoute:" ;
 
     //update route_network blocked
     if (!request.avoidNodes.empty() || !request.avoidSegments.empty()) {
@@ -142,9 +176,24 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
 
     route_network.clearBlocked();
 
-    std::cout << "Source:" << request.src << std::endl
-    << "Destination:" << request.dest << std::endl
-    << "DrivingRoute:";
+    switch (call_mode) {
+        case ID_MODE: {
+            std::cout << "Source:" << request.src << std::endl
+            << "Destination:" << request.dest << std::endl;
+            break;
+        }
+        case CODE_MODE: {
+            std::cout << "Source:" << route_network.getLocationById(request.src)->getCode() << std::endl
+            << "Destination:" <<  route_network.getLocationById(request.dest)->getCode() << std::endl;
+            break;
+        }
+        case NAME_MODE: {
+            std::cout << "Source:" << route_network.getLocationById(request.src)->getName() << std::endl
+            << "Destination:" <<  route_network.getLocationById(request.dest)->getName() << std::endl;
+            break;
+        }
+    }
+    std::cout << "DrivingRoute:";
 
     if (bestParking == nullptr) {
         std::cout << "none\n"

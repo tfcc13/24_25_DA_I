@@ -292,6 +292,7 @@ void RouteMenu::show() {
     std::cout << "(" << ++options << ") >> " << "Get environmentally friendly route source to destination by name" << std::endl;
     std::cout << "(" << ++options << ") >> " << "Get restricted driving route from source to destination by ID" << std::endl;
     std::cout << "(" << ++options << ") >> " << "Get restricted  environmentally friendly route from source to destination by ID" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get restricted driving route from source to destination by code" << std::endl;
     std::cout << "(0) >> Go back "<< std::endl;
 }
 
@@ -519,17 +520,6 @@ Menu *RouteMenu::getNextMenu() {
                 }
             }
 
-            std::cout << "Do you wish to include a stop location ? (Write 'y' or'yes' if you do) ." << std::endl;
-
-            input = InputHandler::getInput();
-
-            if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
-                std::cout <<  "Please enter the location ID to include" << std::endl;
-                if (!InputHandler::get(includeNode)) {
-                    return invalidInput();
-                }
-            }
-
             std::cout << "Please introduce maximum walking time." << std::endl;
 
             int max_time;
@@ -541,10 +531,64 @@ Menu *RouteMenu::getNextMenu() {
             route_network_.restrictedRouteById(source, dest, route_network_, ID_MODE, WALKING_MODE,avoidNodes, avoidRoute,includeNode,max_time);
 
 
+        } break;
+
+        case 9: {
+            std::cout << "Please introduce the source location code." << std::endl;
+            std::string source = InputHandler::getInput();
+
+
+
+            std::cout << "Please introduce the destination location code." << std::endl;
+            std::string dest = InputHandler::getInput();
+
+
+            std::vector<std::string> avoidNodes;
+            std::vector<std::pair<std::string,std::string>> avoidRoute;
+            std::string includeNode = "";
+            std::cout << "Do you wish to avoid any location ? (Write 'y' or'yes' if you do) ." << std::endl;
+
+            input = InputHandler::getInput();
+
+            if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
+                std::cout << "Please introduce the locations code to avoid separated by commas and without spaces (i.e. '1,2,3')." << std::endl;
+                input = InputHandler::getInput();
+                avoidNodes = InputHandler::parseStrSepByComma(input);
+                if (avoidNodes.empty()) {
+                    return invalidInput();
+                }
+            }
+
+            std::cout << "Do you wish to avoid any route ? (Write 'y' or'yes' if you do) ." << std::endl;
+
+            input = InputHandler::getInput();
+
+            if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
+                std::cout <<  "Please enter the source and destination codes to avoid, separated by an hifen ('-') and listed without spaces, using commas between pairs (e.g., '1-2,3-4,3-5')." << std::endl;
+                input = InputHandler::getInput();
+                avoidRoute = InputHandler::parseStrPairSepByComma(input);
+                if (avoidRoute.empty()) {
+                    return invalidInput();
+                }
+            }
+
+            std::cout << "Do you wish to include a stop location ? (Write 'y' or'yes' if you do) ." << std::endl;
+
+            input = InputHandler::getInput();
+
+            if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
+                std::cout <<  "Please enter the location code to include" << std::endl;
+                if (!InputHandler::get(includeNode)) {
+                    return invalidInput();
+                }
+            }
+
+            route_network_.restrictedRouteByCode(source, dest, route_network_, DRIVING_MODE,avoidNodes, avoidRoute,includeNode);
+
+
 
 
         } break;
-
 
 
 

@@ -266,3 +266,56 @@ std::vector<std::pair<int,int>> InputHandler::parseIntPairSepByComma(std::string
 
 }
 
+std::vector<std::string> InputHandler::parseStrSepByComma(std::string input) {
+    std::vector<std::string> avoidLocations;
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use '1,2,3' format.\n";
+        return avoidLocations;
+    }
+
+    std::istringstream ss(input);
+    std::string token;
+
+    while (std::getline(ss, token, ',')) {
+        avoidLocations.push_back(token);
+    }
+
+    return avoidLocations;
+}
+
+std::pair<std::string, std::string> InputHandler::parseStrPair(std::string input) {
+    size_t pos = input.find('-');
+    if (pos == std::string::npos) {
+        std::cerr << "Invalid input: Expected format 'X-Y' (e.g., '1-2').\n";
+        return {"", ""};
+    }
+
+    std::string first = input.substr(0, pos);
+    std::string second = input.substr(pos + 1);
+        return {first, second};
+}
+
+std::vector<std::pair<std::string,std::string>> InputHandler::parseStrPairSepByComma(std::string input) {
+    std::vector<std::pair<std::string, std::string>> pairs;
+
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use 'ALI_ESTAS,LOL_REI,MALA_CIAO' format.\n";
+        return pairs;
+    }
+
+    std::stringstream ss(input);
+    std::string pairStr;
+
+    while (std::getline(ss, pairStr, ',')) {
+        auto parsedPair = parseStrPair(pairStr);
+        if (parsedPair.first == parsedPair.second && parsedPair.first.empty()) {
+            pairs.clear();
+            return pairs;
+        }
+        pairs.push_back(parsedPair);
+    }
+
+    return pairs;
+
+}
+
