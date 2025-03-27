@@ -71,7 +71,7 @@ inline void dijkstra(RouteNetwork* rn, int src_id, bool mode) {
             }
         }
     }
-}
+ }
 
 /**
 * @brief Retrieves the shortest path as a vector of locations.

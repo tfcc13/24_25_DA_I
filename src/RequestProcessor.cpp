@@ -107,6 +107,7 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
     dijkstra(&route_network, request.dest, WALKING_MODE);
     for (auto v : route_network.getLocationSet()) {
         auto* l = static_cast<Location*>(v);
+        if (route_network.isNodeBlocked(l)) continue;
         if (l->getCanPark() && l->getDist() < request.maxWalkTime) {
             Path path;
             double w=0;
