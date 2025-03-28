@@ -85,20 +85,20 @@ class InputHandler {
 
     /**
     * @brief Parses driving-related request parameters from key-value pairs.
-    * @param route The request object to be populated.
+    * @param request The request object to be populated.
     * @param key The key representing the request parameter.
     * @param value The value associated with the key.
-    * @param idx The index of the parameter in the input data.
+    * @param index The index of the parameter in the input data.
     * @param correct A reference to a boolean that indicates whether parsing was successful.
     */
     static void parseDriving(Request &request, std::string key, std::string value, int index, bool &correct);
 
     /**
     * @brief Parses driving-walking request parameters from key-value pairs.
-    * @param route The request object to be populated.
+    * @param request The request object to be populated.
     * @param key The key representing the request parameter.
     * @param value The value associated with the key.
-    * @param idx The index of the parameter in the input data.
+    * @param index The index of the parameter in the input data.
     * @param correct A reference to a boolean that indicates whether parsing was successful.
     */
     static void parseDrivingWalking(Request &request, std::string key, std::string value, int index, bool &correct);
