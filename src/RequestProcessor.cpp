@@ -159,7 +159,7 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
     std::vector<std::string> v1 = drivingPath[bestParking].path;
     printSimplePath(v1, drivingPath[bestParking].dist);
 
-    std::cout << "Parking Node:" << bestParking->getId() << std::endl;
+    std::cout << "ParkingNode:" << bestParking->getId() << std::endl;
 
     std::cout << "WalkingRoute:";
     std::vector<std::string> v2 = walkingPath[bestParking].path;

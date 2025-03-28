@@ -64,11 +64,30 @@ class InputHandler {
     /**
      * @brief Reads from file and transforms into Request
      * @param filepath Path to file to read input
+     * @param correct Boolean to verify input correctness
      * @return Request with given values in read file
      */
     static Request parseInputFile(const std::string& filepath, bool &correct);
 
+
+    /**
+     * @brief Verify if driving input is correct and insert into Request
+     * @param request Request to insert value
+     * @param key Key of value
+     * @param value Value to be inserted in Request
+     * @param index Index of the reading line
+     * @param correct Boolean to verify input correctness
+     */
     static void parseDriving(Request &request, std::string key, std::string value, int index, bool &correct);
+
+    /**
+     * @brief Verify if driving-walking input is correct and insert into Request
+     * @param request Request to insert value
+     * @param key Key of value
+     * @param value Value to be inserted in Request
+     * @param index Index of the reading line
+     * @param correct Boolean to verify input correctness
+     */
     static void parseDrivingWalking(Request &request, std::string key, std::string value, int index, bool &correct);
 
 
