@@ -271,6 +271,8 @@ void RouteNetwork::routeByName(const std::string &src, const std::string &dest, 
     auto src_loc = getLocationByName(src);
     auto dest_loc = getLocationByName(dest);
 
+
+
     if (src_loc == nullptr  || dest_loc == nullptr) {
         std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
         return;
@@ -293,6 +295,8 @@ void RouteNetwork::restrictedRouteById(int src, int dest, RouteNetwork& route_ne
             return;
         }
     }
+
+    // FIX THE IMPLEMENTATION OF DIRECT ROUTES
 
     for (auto it = avoid_routes.begin(); it != avoid_routes.end(); it++) {
         int route_src = it->first;

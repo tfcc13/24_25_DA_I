@@ -63,11 +63,36 @@ public:
     Menu *getNextMenu() override;
 };
 
-class RouteMenu : public Menu {
+class MainRouteMenu : public Menu {
 public:
-    RouteMenu(RouteNetwork &route_network);
+    MainRouteMenu(RouteNetwork &route_network);
     void show() override;
     Menu *getNextMenu() override;
 };
+
+
+class IdRouteMenu : public Menu {
+public:
+    IdRouteMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
+
+class CodeRouteMenu : public Menu {
+public:
+    CodeRouteMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
+class NameRouteMenu : public Menu {
+public:
+    NameRouteMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
+
 
 #endif //MENU_H

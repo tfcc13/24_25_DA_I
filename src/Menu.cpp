@@ -99,7 +99,7 @@ Menu *MainMenu::getNextMenu() {
             return new LocationMenu(route_network_);
         }
         case 2: {
-            return  new RouteMenu(route_network_);
+            return  new MainRouteMenu(route_network_);
             break;
         }
         case 3: {
@@ -278,29 +278,62 @@ Menu *LocationInfoMenu::getNextMenu() {
 
 
 
-RouteMenu::RouteMenu(RouteNetwork &network) : Menu(network) {}
+MainRouteMenu::MainRouteMenu(RouteNetwork &network) : Menu(network) {}
 
-void RouteMenu::show() {
+void MainRouteMenu::show() {
     std::cout << CLEAR;
     int options = 0;
 
-    std::cout << "(" << ++options << ") >> " << "Get unrestricted driving route from source to destination by ID" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get unrestricted driving route from source to destination by code  TO IMPLEMENT" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get unrestricted driving route source to destination by name" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get environmentally friendly route from source to destination by ID" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get environmentally friendly route from source to destination by code  TO IMPLEMENT" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get environmentally friendly route source to destination by name" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get restricted driving route from source to destination by ID" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get restricted  environmentally friendly route from source to destination by ID" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get restricted driving route from source to destination by code" << std::endl;
-    std::cout << "(" << ++options << ") >> " << "Get restricted  environmentally friendly route from source to destination by code" << std::endl;
-
+    std::cout << "(" << ++options << ") >> " << "Get routes by ID" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get routes by code" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get routes by name" << std::endl;
     std::cout << "(0) >> Go back "<< std::endl;
+}
+
+Menu *MainRouteMenu::getNextMenu() {
+    int option;
+    if(!InputHandler::get(option)) {
+        return invalidInput();
+    }
+
+    std::string input;
+    switch (option) {
+        case 0: {
+            return nullptr;
+        }
+        case 1: {
+            return new IdRouteMenu(route_network_);
+        }
+        case 2: {
+            return new CodeRouteMenu(route_network_);
+        }
+        case 3: {
+            return new NameRouteMenu(route_network_);
+        }
+    }
+
+    InputHandler::waitForInput();
+
+    return this;
 }
 
 
 
-Menu *RouteMenu::getNextMenu() {
+IdRouteMenu::IdRouteMenu(RouteNetwork &network) : Menu(network) {}
+
+void IdRouteMenu::show() {
+    std::cout << CLEAR;
+    int options = 0;
+
+    std::cout << "(" << ++options << ") >> " << "Get unrestricted driving route from source to destination" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get environmentally friendly route from source to destination" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get restricted driving route from source to destination" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get restricted  environmentally friendly route from source to destination" << std::endl;
+    std::cout << "(0) >> Go back "<< std::endl;
+}
+
+
+Menu *IdRouteMenu::getNextMenu() {
     int option;
     if(!InputHandler::get(option)) {
         return invalidInput();
@@ -327,34 +360,8 @@ Menu *RouteMenu::getNextMenu() {
             route_network_.routeById(src, dest, route_network_, ID_MODE, DRIVING_MODE);
 
         } break;
+
         case 2: {
-            std::cout << "Please introduce the source location code." << std::endl;
-            input = InputHandler::getInput();
-            std::string source = input;
-
-
-            std::cout << "Please introduce the destination location code." << std::endl;
-            input = InputHandler::getInput();
-            std::string dest = input;
-
-            route_network_.routeByCode(source, dest, route_network_, DRIVING_MODE);
-
-        }   break;
-        case 3: {
-            std::cout << "Please introduce the source location name." << std::endl;
-            input = InputHandler::getInput();
-            std::string source = input;
-
-
-            std::cout << "Please introduce the destination location name." << std::endl;
-            input = InputHandler::getInput();
-            std::string dest = input;
-
-            route_network_.routeByName(source, dest, route_network_, DRIVING_MODE);
-
-        } break;
-
-        case 4: {
             std::cout << "Please introduce the source location ID." << std::endl;
             int src;
             if (!InputHandler::get(src)) {
@@ -376,45 +383,8 @@ Menu *RouteMenu::getNextMenu() {
             route_network_.routeById(src, dest, route_network_, ID_MODE, WALKING_MODE,max_time);
 
         } break;
-        case 5: {
-            std::cout << "Please introduce the source location code." << std::endl;
-            input = InputHandler::getInput();
-            std::string source = input;
 
-
-            std::cout << "Please introduce the destination location code." << std::endl;
-            input = InputHandler::getInput();
-            std::string dest = input;
-
-            std::cout << "Please introduce maximum walking time." << std::endl;
-            int max_time;
-            if (!InputHandler::get(max_time)) {
-                return invalidInput();
-            }
-
-            route_network_.routeByCode(source, dest, route_network_, WALKING_MODE, max_time);
-
-        }   break;
-        case 6: {
-            std::cout << "Please introduce the source location name." << std::endl;
-            input = InputHandler::getInput();
-            std::string source = input;
-
-
-            std::cout << "Please introduce the destination location name." << std::endl;
-            input = InputHandler::getInput();
-            std::string dest = input;
-
-            std::cout << "Please introduce maximum walking time." << std::endl;
-            input = InputHandler::getInput();
-            int max_time = std::stoi(input);
-
-
-            route_network_.routeByName(source, dest, route_network_, WALKING_MODE, max_time);
-
-        } break;
-
-        case 7: {
+        case 3: {
             std::cout << "Please introduce the source location id." << std::endl;
             int source;
 
@@ -473,11 +443,9 @@ Menu *RouteMenu::getNextMenu() {
             route_network_.restrictedRouteById(source, dest, route_network_, ID_MODE, DRIVING_MODE,avoidNodes, avoidRoute,includeNode);
 
 
-
-
         } break;
 
-        case 8: {
+        case 4: {
             std::cout << "Please introduce the source location id." << std::endl;
             int source;
 
@@ -535,7 +503,74 @@ Menu *RouteMenu::getNextMenu() {
 
         } break;
 
-        case 9: {
+    }
+
+    InputHandler::waitForInput();
+
+    return this;
+}
+
+
+CodeRouteMenu::CodeRouteMenu(RouteNetwork &network) : Menu(network) {}
+
+void CodeRouteMenu::show() {
+    std::cout << CLEAR;
+    int options = 0;
+
+    std::cout << "(" << ++options << ") >> " << "Get unrestricted driving route from source to destination" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get environmentally friendly route from source to destination" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get restricted driving route from source to destination" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get restricted  environmentally friendly route from source to destination" << std::endl;
+    std::cout << "(0) >> Go back "<< std::endl;
+}
+
+
+Menu *CodeRouteMenu::getNextMenu() {
+    int option;
+    if(!InputHandler::get(option)) {
+        return invalidInput();
+    }
+
+    std::string input;
+    switch (option) {
+        case 0: {
+            return nullptr;
+        }
+        case 1: {
+            std::cout << "Please introduce the source location code." << std::endl;
+            input = InputHandler::getInput();
+            std::string source = input;
+
+
+            std::cout << "Please introduce the destination location code." << std::endl;
+            input = InputHandler::getInput();
+            std::string dest = input;
+
+            route_network_.routeByCode(source, dest, route_network_, DRIVING_MODE);
+
+        }   break;
+
+        case 2: {
+            std::cout << "Please introduce the source location code." << std::endl;
+            input = InputHandler::getInput();
+            std::string source = input;
+
+
+            std::cout << "Please introduce the destination location code." << std::endl;
+            input = InputHandler::getInput();
+            std::string dest = input;
+
+            std::cout << "Please introduce maximum walking time." << std::endl;
+            int max_time;
+            if (!InputHandler::get(max_time)) {
+                return invalidInput();
+            }
+
+            route_network_.routeByCode(source, dest, route_network_, WALKING_MODE, max_time);
+
+        }   break;
+
+        case 3: {
             std::cout << "Please introduce the source location code." << std::endl;
             std::string source = InputHandler::getInput();
 
@@ -589,7 +624,7 @@ Menu *RouteMenu::getNextMenu() {
 
         } break;
 
-         case 10: {
+         case 4: {
             std::cout << "Please introduce the source location code." << std::endl;
             std::string source = InputHandler::getInput();
 
@@ -637,13 +672,82 @@ Menu *RouteMenu::getNextMenu() {
 
             route_network_.restrictedRouteByCode(source, dest, route_network_, WALKING_MODE,avoidNodes, avoidRoute,includeNode,max_time);
 
+        } break;
+    }
+
+    InputHandler::waitForInput();
+
+    return this;
+}
 
 
+NameRouteMenu::NameRouteMenu(RouteNetwork &network) : Menu(network) {}
+
+void NameRouteMenu::show() {
+    std::cout << CLEAR;
+    int options = 0;
+
+    std::cout << "(" << ++options << ") >> " << "Get unrestricted driving route from source to destination" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get environmentally friendly route from source to destination" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get restricted driving route from source to destination" << std::endl;
+    std::cout << "(" << ++options << ") >> " << "Get restricted  environmentally friendly route from source to destination" << std::endl;
+    std::cout << "(0) >> Go back "<< std::endl;
+}
+
+
+Menu *NameRouteMenu::getNextMenu() {
+    int option;
+    if(!InputHandler::get(option)) {
+        return invalidInput();
+    }
+
+    std::string input;
+    switch (option) {
+        case 0: {
+            return nullptr;
+        }
+
+        case 1: {
+            std::cout << "Please introduce the source location name." << std::endl;
+            input = InputHandler::getInput();
+            std::string source = input;
+
+
+            std::cout << "Please introduce the destination location name." << std::endl;
+            input = InputHandler::getInput();
+            std::string dest = input;
+
+            route_network_.routeByName(source, dest, route_network_, DRIVING_MODE);
 
         } break;
 
 
+        case 2: {
+            std::cout << "Please introduce the source location name." << std::endl;
+            input = InputHandler::getInput();
+            std::string source = input;
 
+
+            std::cout << "Please introduce the destination location name." << std::endl;
+            input = InputHandler::getInput();
+            std::string dest = input;
+
+            std::cout << "Please introduce maximum walking time." << std::endl;
+            input = InputHandler::getInput();
+            int max_time = std::stoi(input);
+
+
+            route_network_.routeByName(source, dest, route_network_, WALKING_MODE, max_time);
+
+        } break;
+
+        case 3: {
+            std::cout << "TO IMPLEMENT" << std::endl;
+        } break;
+
+        case 4: {
+            std::cout << "TO IMPLEMENT" << std::endl;
+        } break;
 
     }
 
