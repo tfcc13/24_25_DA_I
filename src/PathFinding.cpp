@@ -111,9 +111,9 @@ inline std::vector<Location*> getVectorPath(RouteNetwork *rn, const int &origin,
 * @param weight The total weight of the path.
 * @param call_mode The mode used for displaying location information (ID, Code, or Name).
 */
-inline void printSimplePath(std::vector<Location*> v, double weight, int call_mode) {
+inline void printSimplePath(std::vector<Location*> v, double weight, int call_mode, MultiStream out) {
     if (v.empty()) {
-        std::cout << "none\n";
+        out << "none\n";
         return;
     }
 
@@ -142,7 +142,7 @@ inline void printSimplePath(std::vector<Location*> v, double weight, int call_mo
     if (!result.empty()) {
         result.pop_back();  // Remove the last comma
     }
-    std::cout << result << "(" << weight << ")\n";
+    out << result << "(" << weight << ")\n";
 
 
 }

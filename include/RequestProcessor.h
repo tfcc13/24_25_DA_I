@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 
+#include "MultiStream.h"
 #include "RouteNetwork.h"
 
 /**
@@ -47,7 +48,7 @@ public:
     * @param route_network The target route network.
     * @param call_mode The mode of call (ID, Code, Name).
     */
-    static void processUnrestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode);
+    static void processUnrestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode, MultiStream out);
 
     /**
      * @brief Processes a driving route with restrictions (blocked nodes or edges).
@@ -55,7 +56,7 @@ public:
      * @param route_network The target route network.
      * @param call_mode The mode of call (ID, Code, Name).
      */
-    static void processRestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode);
+    static void processRestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode, MultiStream out);
 
     /**
      * @brief Processes a combined driving and walking route.
@@ -63,7 +64,7 @@ public:
      * @param route_network The target route network.
      * @param call_mode The mode of call (ID, Code, Name).
      */
-    static void processDrivingWalking(Request &request, RouteNetwork &route_network, int call_mode);
+    static void processDrivingWalking(Request &request, RouteNetwork &route_network, int call_mode, MultiStream out);
 };
 
 
