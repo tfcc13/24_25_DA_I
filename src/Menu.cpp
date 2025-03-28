@@ -11,7 +11,7 @@
 Menu::Menu(RouteNetwork &route_network) : route_network_(route_network) {}
 
 Menu *Menu::invalidInput() {
-    std::cout << "Invalid option. Please try again." << std::endl;
+    std::cout << "Invalid input. Please try again." << std::endl;
     InputHandler::waitForInput();
     return this;
 }
@@ -708,14 +708,14 @@ Menu *NameRouteMenu::getNextMenu() {
         }
 
         case 1: {
-            std::cout << "Please introduce the source location name." << std::endl;
+            std::cout << "Please introduce the source location name. Use '_' instead of white spaces(e.g. 'Tv._Contumil')" << std::endl;
             input = InputHandler::getInput();
-            std::string source = input;
+            std::string source = InputHandler::parseName(input);
 
 
-            std::cout << "Please introduce the destination location name." << std::endl;
+            std::cout << "Please introduce the destination location name. Use '_' instead of white spaces(e.g. 'Tv._Contumil')" << std::endl;
             input = InputHandler::getInput();
-            std::string dest = input;
+            std::string dest = InputHandler::parseName(input);
 
             route_network_.routeByName(source, dest, route_network_, DRIVING_MODE);
 
@@ -723,30 +723,132 @@ Menu *NameRouteMenu::getNextMenu() {
 
 
         case 2: {
-            std::cout << "Please introduce the source location name." << std::endl;
+            std::cout << "Please introduce the source location name. Use '_' instead of white spaces(e.g. 'Tv._Contumil')" << std::endl;
             input = InputHandler::getInput();
-            std::string source = input;
+            std::string source = InputHandler::parseName(input);
 
 
-            std::cout << "Please introduce the destination location name." << std::endl;
+            std::cout << "Please introduce the destination location name. Use '_' instead of white spaces(e.g. 'Tv._Contumil')" << std::endl;
             input = InputHandler::getInput();
-            std::string dest = input;
+            std::string dest = InputHandler::parseName(input);
 
             std::cout << "Please introduce maximum walking time." << std::endl;
-            input = InputHandler::getInput();
-            int max_time = std::stoi(input);
 
+            int max_time;
+
+            if(!InputHandler::get(max_time)) {
+                return invalidInput();
+            }
 
             route_network_.routeByName(source, dest, route_network_, WALKING_MODE, max_time);
 
         } break;
 
         case 3: {
-            std::cout << "TO IMPLEMENT" << std::endl;
+            std::cout << "Please introduce the source location name. Use '_' instead of white spaces(e.g. 'Tv._Contumil')" << std::endl;
+            input = InputHandler::getInput();
+            std::string source = InputHandler::parseName(input);
+
+
+            std::cout << "Please introduce the destination location name. Use '_' instead of white spaces(e.g. 'Tv._Contumil')" << std::endl;
+            input = InputHandler::getInput();
+            std::string dest = InputHandler::parseName(input);
+
+
+            std::vector<std::string> avoidNodes;
+            std::vector<std::pair<std::string,std::string>> avoidRoute;
+            std::string includeNode = "";
+            std::cout << "Do you wish to avoid any location ? (Write 'y' or'yes' if you do) ." << std::endl;
+
+            input = InputHandler::getInput();
+
+            if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
+                std::cout << "Please introduce the locations code to avoid separated by commas and without spaces (i.e. '1,2,3')." << std::endl;
+                input = InputHandler::getInput();
+                avoidNodes = InputHandler::parseStrSepByComma(input);
+                if (avoidNodes.empty()) {
+                    return invalidInput();
+                }
+            }
+
+            std::cout << "Do you wish to avoid any route ? (Write 'y' or'yes' if you do) ." << std::endl;
+
+            input = InputHandler::getInput();
+
+            if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
+                std::cout <<  "Please enter the source and destination names to avoid, separated by an hifen ('-') and listed without spaces, using commas between pairs (e.g., '1-2,3-4,3-5')." << std::endl;
+                input = InputHandler::getInput();
+                avoidRoute = InputHandler::parseStrPairSepByComma(input);
+                if (avoidRoute.empty()) {
+                    return invalidInput();
+                }
+            }
+
+            std::cout << "Do you wish to include a stop location ? (Write 'y' or'yes' if you do) ." << std::endl;
+
+            input = InputHandler::getInput();
+
+            if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
+                std::cout <<  "Please enter the location name to include" << std::endl;
+                if (!InputHandler::get(includeNode)) {
+                    return invalidInput();
+                }
+                includeNode = InputHandler::parseName(includeNode);
+            }
+
+            route_network_.restrictedRouteByName(source, dest, route_network_, DRIVING_MODE,avoidNodes, avoidRoute,includeNode);
+
         } break;
 
-        case 4: {
-            std::cout << "TO IMPLEMENT" << std::endl;
+         case 4: {
+             std::cout << "Please introduce the source location name. Use '_' instead of white spaces(e.g. 'Tv._Contumil')" << std::endl;
+             input = InputHandler::getInput();
+             std::string source = InputHandler::parseName(input);
+
+
+             std::cout << "Please introduce the destination location name. Use '_' instead of white spaces(e.g. 'Tv._Contumil')" << std::endl;
+             input = InputHandler::getInput();
+             std::string dest = InputHandler::parseName(input);
+
+
+            std::vector<std::string> avoidNodes;
+            std::vector<std::pair<std::string,std::string>> avoidRoute;
+            std::string includeNode = "";
+            std::cout << "Do you wish to avoid any location ? (Write 'y' or'yes' if you do) ." << std::endl;
+
+            input = InputHandler::getInput();
+
+            if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
+                std::cout << "Please introduce the locations code to avoid separated by commas and without spaces (i.e. '1,2,3')." << std::endl;
+                input = InputHandler::getInput();
+                avoidNodes = InputHandler::parseStrSepByComma(input);
+                if (avoidNodes.empty()) {
+                    return invalidInput();
+                }
+            }
+
+            std::cout << "Do you wish to avoid any route ? (Write 'y' or'yes' if you do) ." << std::endl;
+
+            input = InputHandler::getInput();
+
+            if (InputHandler::toLowerString(input) == "yes" || InputHandler::toLowerString(input) == "y") {
+                std::cout <<  "Please enter the source and destination codes to avoid, separated by an hifen ('-') and listed without spaces, using commas between pairs (e.g., '1-2,3-4,3-5')." << std::endl;
+                input = InputHandler::getInput();
+                avoidRoute = InputHandler::parseStrPairSepByComma(input);
+                if (avoidRoute.empty()) {
+                    return invalidInput();
+                }
+            }
+
+             std::cout << "Please introduce maximum walking time." << std::endl;
+
+             int max_time;
+             if (!InputHandler::get(max_time)) {
+                 return invalidInput();
+             }
+
+            route_network_.restrictedRouteByName(source, dest, route_network_, WALKING_MODE,avoidNodes, avoidRoute,includeNode,max_time);
+
         } break;
 
     }

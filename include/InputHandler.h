@@ -109,5 +109,6 @@ class InputHandler {
     static std::vector<std::string> parseStrSepByComma(std::string input);
     static std::pair<std::string, std::string> parseStrPair(std::string input);
     static std::vector<std::pair<std::string,std::string>> parseStrPairSepByComma(std::string input);
+    static std::string parseName(std::string input);
 };
 #endif //INPUTHANDLER_H

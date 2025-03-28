@@ -250,6 +250,7 @@ std::vector<std::pair<int,int>> InputHandler::parseIntPairSepByComma(std::string
         return pairs;
     }
 
+
     std::stringstream ss(input);
     std::string pairStr;
 
@@ -273,7 +274,9 @@ std::vector<std::string> InputHandler::parseStrSepByComma(std::string input) {
         return avoidLocations;
     }
 
-    std::istringstream ss(input);
+    std::string temp = parseName(input);
+    std::stringstream ss(temp);
+
     std::string token;
 
     while (std::getline(ss, token, ',')) {
@@ -299,11 +302,13 @@ std::vector<std::pair<std::string,std::string>> InputHandler::parseStrPairSepByC
     std::vector<std::pair<std::string, std::string>> pairs;
 
     if (input.find(' ') != std::string::npos) {
-        std::cerr << "Invalid input: spaces are not allowed. Please use 'ALI_ESTAS,LOL_REI,MALA_CIAO' format.\n";
+        std::cerr << "Invalid input: spaces are not allowed. Please use 'ALI-ESTAS,LOL-REI,MALA_CIAO' format.\n";
         return pairs;
     }
 
-    std::stringstream ss(input);
+    std::string temp = parseName(input);
+
+    std::stringstream ss(temp);
     std::string pairStr;
 
     while (std::getline(ss, pairStr, ',')) {
@@ -318,4 +323,21 @@ std::vector<std::pair<std::string,std::string>> InputHandler::parseStrPairSepByC
     return pairs;
 
 }
+
+std::string InputHandler::parseName(std::string input) {
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use 'ALI-ESTAS,LOL-REI,MALA_CIAO' format.\n";
+        return "";
+    }
+
+    std::string output = input;
+    for (char &c : output) {
+        if (c == '_') {
+            c = ' ';  // Replace underscore with space
+        }
+    }
+    return output;
+
+}
+
 

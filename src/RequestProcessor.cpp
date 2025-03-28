@@ -221,7 +221,22 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
     std::vector<Location*> v1 = drivingPath[bestParking].path;
     printSimplePath(v1, drivingPath[bestParking].dist, call_mode, out);
 
-    out << "Parking Node:" << bestParking->getId() << std::endl;
+
+    switch (call_mode) {
+        case ID_MODE: {
+            out << "Parking Node:" << bestParking->getId() << std::endl;
+            break;
+        }
+        case CODE_MODE: {
+            out << "Parking Node:" << bestParking->getCode() << std::endl;
+            break;
+        }
+        case NAME_MODE: {
+            out << "Parking Node:" << bestParking->getName() << std::endl;
+            break;
+        }
+    }
+
 
     out << "WalkingRoute:";
     std::vector<Location*> v2 = walkingPath[bestParking].path;
