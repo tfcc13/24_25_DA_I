@@ -3,52 +3,66 @@
 //
 
 #include "RequestProcessor.h"
+
+#include <fstream>
+
 #include "PathFinding.cpp"
 
 #include <iostream>
 #include <ostream>
 
+#include "MultiStream.h"
+
 
 void RequestProcessor::processRequest(Request &request, RouteNetwork &route_network, int call_mode) {
+    std::ofstream outFile("../output/output.txt");
+    if (!outFile) {
+        std::cerr << "Error opening file!" << std::endl;
+        return;
+    }
+    MultiStream out(std::cout, outFile);
+
     if (request.mode == "driving") {
         if (!request.avoidNodes.empty() || !request.avoidSegments.empty() || request.includeNode >= 0) {
-            processRestrictedDriving(request, route_network, call_mode);
+            processRestrictedDriving(request, route_network, call_mode, out);
         }
-        else processUnrestrictedDriving(request, route_network, call_mode);
+        else processUnrestrictedDriving(request, route_network, call_mode, out);
     }
-    else if (request.mode == "driving-walking") processDrivingWalking(request, route_network, call_mode);
+    else if (request.mode == "driving-walking") processDrivingWalking(request, route_network, call_mode, out);
     else std::cout << "Invalid input format\n";
+
+    outFile.close();
 }
 
-void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode) {
+void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode, MultiStream out) {
 
 
     switch (call_mode) {
         case ID_MODE: {
-            std::cout << "Source:" << request.src << std::endl
+            out << "Source:" << request.src << std::endl
             << "Destination:" << request.dest << std::endl;
             break;
         }
         case CODE_MODE: {
-            std::cout << "Source:" << route_network.getLocationById(request.src)->getCode() << std::endl
+            out << "Source:" << route_network.getLocationById(request.src)->getCode() << std::endl
             << "Destination:" <<  route_network.getLocationById(request.dest)->getCode() << std::endl;
             break;
         }
         case NAME_MODE: {
-            std::cout << "Source:" << route_network.getLocationById(request.src)->getName() << std::endl
+            out << "Source:" << route_network.getLocationById(request.src)->getName() << std::endl
             << "Destination:" <<  route_network.getLocationById(request.dest)->getName() << std::endl;
             break;
         }
     }
 
-    std::cout << "BestDrivingRoute:" ;
+    out << "BestDrivingRoute:" ;
 
 
     double w=0;
     std::vector<Location*> v;
 
     v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
-    printSimplePath(v, w, call_mode);
+    printSimplePath(v, w, call_mode, out);
 
     if (v.empty()) return;
 
@@ -57,34 +71,34 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
         route_network.blockNode(std::stoi(v[i]->getId()));
     }
 
-    std::cout << "AlternativeDrivingRoute:";
+    out << "AlternativeDrivingRoute:";
 
     w=0;
     v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
-    printSimplePath(v, w, call_mode);
+    printSimplePath(v, w, call_mode, out);
     route_network.clearBlocked();
 
 }
 
-void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode) {
+void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode, MultiStream out) {
     switch (call_mode) {
         case ID_MODE: {
-            std::cout << "Source:" << request.src << std::endl
+            out << "Source:" << request.src << std::endl
             << "Destination:" << request.dest << std::endl;
             break;
         }
         case CODE_MODE: {
-            std::cout << "Source:" << route_network.getLocationById(request.src)->getCode() << std::endl
+            out << "Source:" << route_network.getLocationById(request.src)->getCode() << std::endl
             << "Destination:" <<  route_network.getLocationById(request.dest)->getCode() << std::endl;
             break;
         }
         case NAME_MODE: {
-            std::cout << "Source:" << route_network.getLocationById(request.src)->getName() << std::endl
+            out << "Source:" << route_network.getLocationById(request.src)->getName() << std::endl
             << "Destination:" <<  route_network.getLocationById(request.dest)->getName() << std::endl;
             break;
         }
     }
-    std::cout<< "RestrictedDrivingRoute:" ;
+    out<< "RestrictedDrivingRoute:" ;
 
     //update route_network blocked
     if (!request.avoidNodes.empty() || !request.avoidSegments.empty()) {
@@ -98,7 +112,7 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
     std::vector<Location*> v;
     if (request.includeNode == -1) {
         v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
-        printSimplePath(v, w, call_mode);
+        printSimplePath(v, w, call_mode, out);
         route_network.clearBlocked();
         return;
     }
@@ -110,12 +124,12 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
     v = getPath(&route_network, request.src, request.includeNode, w, DRIVING_MODE);
     v2 = getPath(&route_network, request.includeNode, request.dest, w, DRIVING_MODE);
     if (v.empty() || v2.empty()) {
-        std::cout << "none\n";
+        out << "none\n";
         return;
     }
 
     std::vector<Location*> path = mergeIncludePaths(v, v2);
-    printSimplePath(path, w, call_mode);
+    printSimplePath(path, w, call_mode, out);
 
 }
 
@@ -126,7 +140,7 @@ typedef struct {
     std::vector<Location*> path;
 } Path;
 
-void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &route_network, int call_mode) {
+void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &route_network, int call_mode, MultiStream out) {
     if (!request.avoidNodes.empty() || !request.avoidSegments.empty()) {
         for (int id : request.avoidNodes) route_network.blockNode(id);
         for (std::pair<int, int> p : request.avoidSegments) {
@@ -178,43 +192,43 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
 
     switch (call_mode) {
         case ID_MODE: {
-            std::cout << "Source:" << request.src << std::endl
+            out << "Source:" << request.src << std::endl
             << "Destination:" << request.dest << std::endl;
             break;
         }
         case CODE_MODE: {
-            std::cout << "Source:" << route_network.getLocationById(request.src)->getCode() << std::endl
+            out << "Source:" << route_network.getLocationById(request.src)->getCode() << std::endl
             << "Destination:" <<  route_network.getLocationById(request.dest)->getCode() << std::endl;
             break;
         }
         case NAME_MODE: {
-            std::cout << "Source:" << route_network.getLocationById(request.src)->getName() << std::endl
+            out << "Source:" << route_network.getLocationById(request.src)->getName() << std::endl
             << "Destination:" <<  route_network.getLocationById(request.dest)->getName() << std::endl;
             break;
         }
     }
-    std::cout << "DrivingRoute:";
+    out << "DrivingRoute:";
 
     if (bestParking == nullptr) {
-        std::cout << "none\n"
+        out << "none\n"
         << "ParkingNode:none\n"
-        << "WalkingRoot:none\n"
+        << "WalkingRoute:none\n"
         << "TotalTime:none\n"
         << "Message: No possible route with max. walking time of " << request.maxWalkTime << " minutes.\n";
         return;
     }
 
     std::vector<Location*> v1 = drivingPath[bestParking].path;
-    printSimplePath(v1, drivingPath[bestParking].dist, call_mode);
+    printSimplePath(v1, drivingPath[bestParking].dist, call_mode, out);
 
-    std::cout << "Parking Node:" << bestParking->getId() << std::endl;
+    out << "Parking Node:" << bestParking->getId() << std::endl;
 
-    std::cout << "WalkingRoute:";
+    out << "WalkingRoute:";
     std::vector<Location*> v2 = walkingPath[bestParking].path;
     reverse(v2.begin(), v2.end());
-    printSimplePath(v2, walkingPath[bestParking].dist, call_mode);
+    printSimplePath(v2, walkingPath[bestParking].dist, call_mode, out);
 
-    std::cout << "TotalTime:" << minTotalTime << std::endl;
+    out << "TotalTime:" << minTotalTime << std::endl;
 
 }
 
