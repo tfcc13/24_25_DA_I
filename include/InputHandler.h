@@ -13,7 +13,9 @@ class InputHandler {
 
     public:
 
-    /// Ignores an input after pressing the key enter
+    /**
+     *@brief Ignores an input after pressing the key enter
+     */
     static void waitForInput();
 
     /**
@@ -60,6 +62,19 @@ class InputHandler {
         return convertStrToVar(str, var);
     }
 
+    /**
+    * @brief Converts a string to lowercase.
+    * @param input The input string.
+    * @return A new string with all characters converted to lowercase.
+    */
+    static std::string toLowerString(const std::string& input);
+
+    /**
+    * @brief Converts a string to uppercase.
+    * @param input The input string.
+    * @return A new string with all characters converted to uppercase.
+    */
+    static std::string toUpperString(const std::string& input);
 
     /**
      * @brief Reads from file and transforms into Request
@@ -68,10 +83,32 @@ class InputHandler {
      */
     static Request parseInputFile(const std::string& filepath, bool &correct);
 
+    /**
+    * @brief Parses driving-related request parameters from key-value pairs.
+    * @param request The request object to be populated.
+    * @param key The key representing the request parameter.
+    * @param value The value associated with the key.
+    * @param index The index of the parameter in the input data.
+    * @param correct A reference to a boolean that indicates whether parsing was successful.
+    */
     static void parseDriving(Request &request, std::string key, std::string value, int index, bool &correct);
+
+    /**
+    * @brief Parses driving-walking request parameters from key-value pairs.
+    * @param request The request object to be populated.
+    * @param key The key representing the request parameter.
+    * @param value The value associated with the key.
+    * @param index The index of the parameter in the input data.
+    * @param correct A reference to a boolean that indicates whether parsing was successful.
+    */
     static void parseDrivingWalking(Request &request, std::string key, std::string value, int index, bool &correct);
 
-
-
+    static std::vector<int> parseIntSepByComma(std::string input) ;
+    static std::pair<int, int> parseIntPair(std::string input) ;
+    static std::vector<std::pair<int,int>> parseIntPairSepByComma(std::string input) ;
+    static std::vector<std::string> parseStrSepByComma(std::string input);
+    static std::pair<std::string, std::string> parseStrPair(std::string input);
+    static std::vector<std::pair<std::string,std::string>> parseStrPairSepByComma(std::string input);
+    static std::string parseName(std::string input);
 };
 #endif //INPUTHANDLER_H

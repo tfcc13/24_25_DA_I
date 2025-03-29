@@ -24,8 +24,11 @@ int main() {
         else {
             delete menu.top();
             menu.pop();
+            if (menu.size()==1) break;
         }
     }
+
+    delete network;
 
     std::cout << "BYE! See you next time." << std::endl;
 }

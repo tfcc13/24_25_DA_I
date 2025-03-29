@@ -8,8 +8,13 @@
 #include <utility>
 #include <vector>
 
+#include "MultiStream.h"
 #include "RouteNetwork.h"
 
+/**
+ * @struct Request
+ * @brief Represents a routing request with various parameters.
+ */
 
 typedef struct {
     std::string mode = "";
@@ -21,13 +26,45 @@ typedef struct {
     int maxWalkTime = -1;
 } Request;
 
+/**
+ * @class RequestProcessor
+ * @brief Processes routing requests.
+ */
 
 class RequestProcessor {
 public:
-    static void processRequest(Request &request, RouteNetwork &route_network);
-    static void processUnrestrictedDriving(Request &request, RouteNetwork &route_network);
-    static void processRestrictedDriving(Request &request, RouteNetwork &route_network);
-    static void processDrivingWalking(Request &request, RouteNetwork &route_network);
+
+    /**
+    * @brief Processes a given request and determines the appropriate routing method.
+    * @param request The routing request.
+    * @param route_network The target route network.
+    * @param call_mode The mode of call (ID, Code, Name).
+    */
+    static void processRequest(Request &request, RouteNetwork &route_network, int call_mode);
+
+    /**
+    * @brief Processes a driving route without any restrictions.
+    * @param request The routing request.
+    * @param route_network The target route network.
+    * @param call_mode The mode of call (ID, Code, Name).
+    */
+    static void processUnrestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode, MultiStream out);
+
+    /**
+     * @brief Processes a driving route with restrictions (blocked nodes or edges).
+     * @param request The routing request.
+     * @param route_network The target route network.
+     * @param call_mode The mode of call (ID, Code, Name).
+     */
+    static void processRestrictedDriving(Request &request, RouteNetwork &route_network, int call_mode, MultiStream out);
+
+    /**
+     * @brief Processes a combined driving and walking route.
+     * @param request The routing request.
+     * @param route_network The target route network.
+     * @param call_mode The mode of call (ID, Code, Name).
+     */
+    static void processDrivingWalking(Request &request, RouteNetwork &route_network, int call_mode, MultiStream out);
 };
 
 

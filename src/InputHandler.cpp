@@ -30,6 +30,21 @@ std::string InputHandler::getInputLine() {
     return input;
 }
 
+
+std::string InputHandler::toLowerString(const std::string& input) {
+    std::string lowerStr = input;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return lowerStr;
+}
+
+std::string InputHandler::toUpperString(const std::string& input) {
+    std::string lowerStr = input;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
+                   [](unsigned char c) { return std::toupper(c); });
+    return lowerStr;
+}
+
 void InputHandler::parseDriving(Request &route, std::string key, std::string value, int idx, bool &correct) {
     switch (idx) {
         case 0: {
@@ -72,7 +87,7 @@ void InputHandler::parseDriving(Request &route, std::string key, std::string val
                     route.avoidSegments.emplace_back(a,b);
                 }
             }
-            break;
+             break;
         }
         case 5: {
             if (key != "IncludeNode") {correct = false; break;}
@@ -85,6 +100,9 @@ void InputHandler::parseDriving(Request &route, std::string key, std::string val
         default:break;
     }
 }
+
+
+
 
 void InputHandler::parseDrivingWalking(Request &route, std::string key, std::string value, int idx, bool &correct) {
     switch (idx) {
@@ -179,3 +197,147 @@ Request InputHandler::parseInputFile(const std::string& filepath, bool &correct)
     file.close();
     return route;
 }
+
+ std::vector<int> InputHandler::parseIntSepByComma(std::string input) {
+    std::vector<int> avoidLocations;
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use '1,2,3' format.\n";
+        return avoidLocations;
+    }
+
+    std::istringstream ss(input);
+    std::string token;
+
+    while (std::getline(ss, token, ',')) {
+        try {
+            avoidLocations.push_back(std::stoi(token)); // Convert to int
+        } catch (const std::invalid_argument&) {
+            std::cerr << "Invalid number detected: '" << token << "'. Skipping.\n";
+            avoidLocations.clear();
+            return avoidLocations;
+        }
+    }
+
+    return avoidLocations;
+}
+
+std::pair<int, int> InputHandler::parseIntPair(std::string input) {
+    size_t pos = input.find('-');
+    if (pos == std::string::npos) {
+        std::cerr << "Invalid input: Expected format 'X-Y' (e.g., '1-2').\n";
+        return {-1, -1};
+    }
+
+    try {
+        int first = std::stoi(input.substr(0, pos));
+        int second = std::stoi(input.substr(pos + 1));
+        return {first, second};
+    } catch (const std::invalid_argument&) {
+        std::cerr << "Invalid input: Non-numeric values found.\n";
+    } catch (const std::out_of_range&) {
+        std::cerr << "Invalid input: Number out of range.\n";
+    }
+
+    return {-1, -1};
+
+}
+
+std::vector<std::pair<int,int>> InputHandler::parseIntPairSepByComma(std::string input) {
+    std::vector<std::pair<int, int>> pairs;
+
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use '1_2,3_4,2_5' format.\n";
+        return pairs;
+    }
+
+
+    std::stringstream ss(input);
+    std::string pairStr;
+
+    while (std::getline(ss, pairStr, ',')) {
+        auto parsedPair = parseIntPair(pairStr);
+        if (parsedPair.first == parsedPair.second && parsedPair.first == -1) {
+            pairs.clear();
+            return pairs;
+        }
+        pairs.push_back(parsedPair);
+    }
+
+    return pairs;
+
+}
+
+std::vector<std::string> InputHandler::parseStrSepByComma(std::string input) {
+    std::vector<std::string> avoidLocations;
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use '1,2,3' format.\n";
+        return avoidLocations;
+    }
+
+    std::string temp = parseName(input);
+    std::stringstream ss(temp);
+
+    std::string token;
+
+    while (std::getline(ss, token, ',')) {
+        avoidLocations.push_back(token);
+    }
+
+    return avoidLocations;
+}
+
+std::pair<std::string, std::string> InputHandler::parseStrPair(std::string input) {
+    size_t pos = input.find('-');
+    if (pos == std::string::npos) {
+        std::cerr << "Invalid input: Expected format 'X-Y' (e.g., '1-2').\n";
+        return {"", ""};
+    }
+
+    std::string first = input.substr(0, pos);
+    std::string second = input.substr(pos + 1);
+        return {first, second};
+}
+
+std::vector<std::pair<std::string,std::string>> InputHandler::parseStrPairSepByComma(std::string input) {
+    std::vector<std::pair<std::string, std::string>> pairs;
+
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use 'ALI-ESTAS,LOL-REI,MALA_CIAO' format.\n";
+        return pairs;
+    }
+
+    std::string temp = parseName(input);
+
+    std::stringstream ss(temp);
+    std::string pairStr;
+
+    while (std::getline(ss, pairStr, ',')) {
+        auto parsedPair = parseStrPair(pairStr);
+        if (parsedPair.first == parsedPair.second && parsedPair.first.empty()) {
+            pairs.clear();
+            return pairs;
+        }
+        pairs.push_back(parsedPair);
+    }
+
+    return pairs;
+
+}
+
+std::string InputHandler::parseName(std::string input) {
+    if (input.find(' ') != std::string::npos) {
+        std::cerr << "Invalid input: spaces are not allowed. Please use 'ALI-ESTAS,LOL-REI,MALA_CIAO' format.\n";
+        return "";
+    }
+
+    std::string output = input;
+    for (char &c : output) {
+        if (c == '_') {
+            c = ' ';  // Replace underscore with space
+        }
+    }
+    return output;
+
+}
+
+

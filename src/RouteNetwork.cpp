@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "InputHandler.h"
 #include "Route.h"
 
 RouteNetwork::RouteNetwork() {
@@ -135,6 +136,28 @@ Location* RouteNetwork::getLocationById(int id) {
     return nullptr;
 }
 
+Location* RouteNetwork::getLocationByCode(const std::string& code) {
+
+    std::string upperCode = InputHandler::toUpperString(code);
+
+    auto iter = locations_->find(upperCode);
+    if (iter == locations_->end()) {
+        return nullptr;
+    }
+    return iter->second;
+}
+
+Location* RouteNetwork::getLocationByName(const std::string& name) {
+
+    std::string lowerName = InputHandler::toLowerString(name);
+
+    for (auto loc : *locations_) {
+        if (InputHandler::toLowerString(loc.second->getName()) == lowerName) return loc.second;
+    }
+    return nullptr;
+}
+
+
 std::vector<Vertex<std::string>*> RouteNetwork::getLocationSet() {
     return this->getVertexSet();
 }
@@ -177,4 +200,256 @@ void RouteNetwork::clearBlocked() {
     blockedEdges.clear();
 }
 
+void RouteNetwork::showLocationInfoById(std::string const&  id) {
+    Location* loc = getLocationById(std::stoi(id));
+    if ( loc == nullptr) {
+        std::cout << "Location " << id << " does not exist" << std::endl;
+    }
+    else {
+        loc->printInfo();
+    }
+}
 
+void RouteNetwork::showLocationInfoByCode(std::string const&  code) {
+    Location* loc = getLocationByCode(code);
+    if ( loc == nullptr) {
+        std::cout << "Location " << code << " does not exist" << std::endl;
+    }
+    else {
+        loc->printInfo();
+    }
+}
+
+void RouteNetwork::showLocationInfoByName(std::string const&  name) {
+    Location* loc = getLocationByName(name);
+    if ( loc == nullptr) {
+        std::cout << "Location " << name << " does not exist" << std::endl;
+    }
+    else {
+        loc->printInfo();
+    }
+}
+
+void RouteNetwork::routeById(int src, int dest, RouteNetwork& route_network, int call_mode, int route_mode, int max_walk_time) {
+
+    if (getLocationById(src) == nullptr  || getLocationById(dest) == nullptr) {
+        std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
+        return;
+    }
+
+    Request request;
+
+    if (route_mode == DRIVING_MODE) {
+        request.mode = "driving";
+    }
+    else {
+        request.mode = "driving-walking";
+    }
+
+    request.maxWalkTime = max_walk_time;
+    request.src = src;
+    request.dest = dest;
+
+    RequestProcessor::processRequest(request, route_network, call_mode );
+
+}
+
+void RouteNetwork::routeByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, int max_walk_time) {
+    auto src_loc = getLocationByCode(src);
+    auto dest_loc = getLocationByCode(dest);
+
+    if (src_loc == nullptr  || dest_loc == nullptr) {
+        std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
+        return;
+    }
+
+    routeById(std::stoi(src_loc->getId()), std::stoi(dest_loc->getId()), route_network, CODE_MODE, route_mode, max_walk_time);
+
+}
+
+void RouteNetwork::routeByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, int max_walk_time) {
+    auto src_loc = getLocationByName(src);
+    auto dest_loc = getLocationByName(dest);
+
+
+
+    if (src_loc == nullptr  || dest_loc == nullptr) {
+        std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
+        return;
+    }
+
+    routeById(std::stoi(src_loc->getId()), std::stoi(dest_loc->getId()), route_network, NAME_MODE, route_mode, max_walk_time);
+
+}
+
+void RouteNetwork::restrictedRouteById(int src, int dest, RouteNetwork& route_network, int call_mode, int route_mode, std::vector<int> avoid_nodes, std::vector<std::pair<int,int>> avoid_routes, int include_node, int max_walk_time) {
+
+    if (getLocationById(src) == nullptr  || getLocationById(dest) == nullptr) {
+        std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
+        return;
+    }
+
+    for (auto it = avoid_nodes.begin(); it != avoid_nodes.end(); it++) {
+        if (getLocationById(*it) == nullptr) {
+            std::cout << "Node to avoid number " << *it << " does not exist." << std::endl;
+            return;
+        }
+    }
+
+    // FIX THE IMPLEMENTATION OF DIRECT ROUTES
+
+    for (auto it = avoid_routes.begin(); it != avoid_routes.end(); it++) {
+        int route_src = it->first;
+        int route_dest = it->second;
+
+        if (getLocationById(route_src) == nullptr  || getLocationById(route_dest) == nullptr) {
+            std::cout << "Route " << route_src << "-" << route_dest << " doesn't exist." << std::endl;
+            return;
+        }
+        bool is_dest = false;
+        Location* temp_loc = getLocationById(route_src);
+        for (auto edge : temp_loc->getAdj()) {
+            if (static_cast<Location*> (edge->getDest())->getId() == std::to_string(route_dest)) {
+                is_dest = true;
+            }
+        }
+
+        if (!is_dest) {
+            std::cout << "Route " << route_src << "-" << route_dest << " doesn't exist." << std::endl;
+            return;
+        }
+    }
+
+    Request request;
+
+    if (route_mode == DRIVING_MODE) {
+        request.mode = "driving";
+    }
+    else {
+        request.mode = "driving-walking";
+    }
+
+    request.maxWalkTime = max_walk_time;
+    request.src = src;
+    request.dest = dest;
+    request.avoidNodes = avoid_nodes;
+    request.avoidSegments = avoid_routes;
+    request.includeNode = include_node;
+
+    RequestProcessor::processRequest(request, route_network, call_mode );
+
+}
+
+void RouteNetwork::restrictedRouteByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, std::vector<std::string> avoid_nodes, std::vector<std::pair<std::string,std::string>> avoid_routes, std::string include_node, int max_walk_time) {
+    auto src_loc = getLocationByCode(src);
+    auto dest_loc = getLocationByCode(dest);
+    if (src_loc == nullptr  || dest_loc == nullptr) {
+        std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
+        return;
+    }
+
+    std::vector<int> avoid_nodes_int;
+    std::vector<std::pair<int,int>> avoid_routes_int;
+
+    for (auto it = avoid_nodes.begin(); it != avoid_nodes.end(); it++) {
+        auto l = getLocationByCode(*it);
+        if (l== nullptr) {
+            std::cout << "Node to avoid with code " << *it << " does not exist." << std::endl;
+            return;
+        }
+        avoid_nodes_int.push_back(std::stoi(l->getId()));
+    }
+
+    for (auto it = avoid_routes.begin(); it != avoid_routes.end(); it++) {
+        std::string route_src = it->first;
+        std::string route_dest = it->second;
+
+        auto l_src  = getLocationByCode(route_src);
+        auto l_dest = getLocationByCode(route_dest);
+
+        if (l_src == nullptr  || l_dest == nullptr) {
+            std::cout << "Route " << route_src << "-" << route_dest << " doesn't exist." << std::endl;
+            return;
+        }
+        bool is_dest = false;
+        for (auto edge : l_src->getAdj()) {
+            if (InputHandler::toLowerString(static_cast<Location*> (edge->getDest())->getCode()) == InputHandler::toLowerString(route_dest)) {
+                is_dest = true;
+            }
+        }
+
+        if (!is_dest) {
+            std::cout << "Route " << route_src << "-" << route_dest << " doesn't exist." << std::endl;
+            return;
+        }
+        avoid_routes_int.push_back(std::make_pair(std::stoi(l_src->getId()), std::stoi(l_dest->getId())));
+    }
+    int include_node_int = -1;
+    if (!include_node.empty()) {
+        if (getLocationByCode(include_node) == nullptr) {
+            include_node_int = route_network.getLocations()->size()+1;
+        }
+        else {
+            include_node_int = std::stoi(getLocationByCode(include_node)->getId());
+        }
+    }
+
+    restrictedRouteById(std::stoi(src_loc->getId()), std::stoi(dest_loc->getId()), route_network, CODE_MODE, route_mode,avoid_nodes_int, avoid_routes_int,include_node_int,max_walk_time);
+}
+
+void RouteNetwork::restrictedRouteByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, std::vector<std::string> avoid_nodes, std::vector<std::pair<std::string,std::string>> avoid_routes, std::string include_node, int max_walk_time) {
+    auto src_loc = getLocationByName(src);
+    auto dest_loc = getLocationByName(dest);
+    if (src_loc == nullptr  || dest_loc == nullptr) {
+        std::cout << "Source " << src << " or destination " << dest << " doesn't exist." << std::endl;
+        return;
+    }
+
+    std::vector<int> avoid_nodes_int;
+    std::vector<std::pair<int,int>> avoid_routes_int;
+
+    for (auto it = avoid_nodes.begin(); it != avoid_nodes.end(); it++) {
+        auto l = getLocationByName(*it);
+        if (l== nullptr) {
+            std::cout << "Node to avoid with code " << *it << " does not exist." << std::endl;
+            return;
+        }
+        avoid_nodes_int.push_back(std::stoi(l->getId()));
+    }
+
+    for (auto it = avoid_routes.begin(); it != avoid_routes.end(); it++) {
+        std::string route_src = it->first;
+        std::string route_dest = it->second;
+
+        auto l_src  = getLocationByName(route_src);
+        auto l_dest = getLocationByName(route_dest);
+
+        if (l_src == nullptr  || l_dest == nullptr) {
+            std::cout << "Route " << route_src << "-" << route_dest << " doesn't exist." << std::endl;
+            return;
+        }
+        bool is_dest = false;
+        for (auto edge : l_src->getAdj()) {
+            if (InputHandler::toLowerString(static_cast<Location*> (edge->getDest())->getName()) == InputHandler::toLowerString(route_dest)) {
+                is_dest = true;
+            }
+        }
+
+        if (!is_dest) {
+            std::cout << "Route " << route_src << "-" << route_dest << " doesn't exist." << std::endl;
+            return;
+        }
+        avoid_routes_int.push_back(std::make_pair(std::stoi(l_src->getId()), std::stoi(l_dest->getId())));
+    }
+    int include_node_int = -1;
+    if (!include_node.empty()) {
+        if (getLocationByName(include_node) == nullptr) {
+            include_node_int = route_network.getLocations()->size()+1;
+        }
+        else {
+            include_node_int = std::stoi(getLocationByName(include_node)->getId());
+        }
+    }
+
+    restrictedRouteById(std::stoi(src_loc->getId()), std::stoi(dest_loc->getId()), route_network, NAME_MODE, route_mode,avoid_nodes_int, avoid_routes_int,include_node_int,max_walk_time);
+}

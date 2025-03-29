@@ -56,4 +56,43 @@ class InputMenu : public Menu {
     Menu *getNextMenu() override;
 };
 
+class LocationInfoMenu : public Menu {
+public:
+    LocationInfoMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
+class MainRouteMenu : public Menu {
+public:
+    MainRouteMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
+
+class IdRouteMenu : public Menu {
+public:
+    IdRouteMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
+
+class CodeRouteMenu : public Menu {
+public:
+    CodeRouteMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
+class NameRouteMenu : public Menu {
+public:
+    NameRouteMenu(RouteNetwork &route_network);
+    void show() override;
+    Menu *getNextMenu() override;
+};
+
+
+
 #endif //MENU_H
