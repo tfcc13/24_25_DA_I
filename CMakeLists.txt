@@ -26,6 +26,7 @@ add_executable(DA_PROJECT_1 main.cpp
         include/RequestProcessor.h
         src/RequestProcessor.cpp
         include/MultiStream.h
+        include/PathFinding.h
 )
 
 

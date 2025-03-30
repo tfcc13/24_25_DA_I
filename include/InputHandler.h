@@ -1,7 +1,3 @@
-//
-// Created by tiago on 26/02/2025.
-//
-
 #ifndef INPUTHANDLER_H
 #define INPUTHANDLER_H
 #include <iostream>
@@ -77,6 +73,13 @@ class InputHandler {
     static std::string toUpperString(const std::string& input);
 
     /**
+    * @brief Strips whitespaces, tab and new line chars.
+    * @param input The input string.
+    * @return A new trimmed string.
+    */
+    static void trimString(std::string &str);
+
+    /**
      * @brief Reads from file and transforms into Request
      * @param filepath Path to file to read input
      * @return Request with given values in read file
@@ -103,12 +106,53 @@ class InputHandler {
     */
     static void parseDrivingWalking(Request &request, std::string key, std::string value, int index, bool &correct);
 
+    /**
+    * @brief Parses a comma-separated string of integers into a vector of integers.
+    * @param input The input string containing integers separated by commas.
+    * @return A vector containing the parsed integers. Returns an empty vector if the input is invalid.
+    */
     static std::vector<int> parseIntSepByComma(std::string input) ;
+
+    /**
+    * @brief Parses a string representing a pair of integers separated by a hyphen ('-').
+    * @param input The input string in the format "X-Y".
+    * @return A pair of integers. Returns {-1, -1} if the input format is invalid.
+    */
     static std::pair<int, int> parseIntPair(std::string input) ;
+
+    /**
+    * @brief Parses a comma-separated list of integer pairs.
+    * @param input The input string containing pairs in "X-Y" format, separated by commas.
+    * @return A vector of integer pairs. Returns an empty vector if any pair is invalid.
+    */
     static std::vector<std::pair<int,int>> parseIntPairSepByComma(std::string input) ;
+
+    /**
+    * @brief Parses a comma-separated string of words.
+    * @param input The input string containing words separated by commas.
+    * @return A vector of strings representing the parsed words.
+    */
     static std::vector<std::string> parseStrSepByComma(std::string input);
+
+    /**
+    * @brief Parses a string representing a pair of words separated by a hyphen ('-').
+    * @param input The input string in the format "word1-word2".
+    * @return A pair of strings. Returns {"", ""} if the input format is invalid.
+    */
     static std::pair<std::string, std::string> parseStrPair(std::string input);
+
+    /**
+    * @brief Parses a comma-separated list of word pairs.
+    * @param input The input string containing pairs in "word1-word2" format, separated by commas.
+    * @return A vector of string pairs. Returns an empty vector if any pair is invalid.
+    */
     static std::vector<std::pair<std::string,std::string>> parseStrPairSepByComma(std::string input);
+
+    /**
+    * @brief Converts an input string by replacing underscores ('_') with spaces.
+    * @param input The input string to process.
+    * @return A modified string with underscores replaced by spaces. Returns an empty string if input contains spaces.
+    */
     static std::string parseName(std::string input);
 };
 #endif //INPUTHANDLER_H

@@ -1,7 +1,3 @@
-//
-// Created by tiago on 26/02/2025.
-//
-
 #include "Route.h"
 
 Route::Route(Vertex<std::string> *orig, Vertex<std::string> *dest, double walking_time, double driving_time): Edge(orig, dest, walking_time, driving_time) {
