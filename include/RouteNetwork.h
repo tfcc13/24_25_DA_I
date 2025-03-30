@@ -1,7 +1,3 @@
-//
-// Created by tiago on 26/02/2025.
-//
-
 #ifndef ROUTENETWORK_H
 #define ROUTENETWORK_H
 
@@ -27,11 +23,11 @@ class Location;
  */
 class RouteNetwork : private Graph<std::string> {
 private:
-    RouteNetwork *route_network_;
-    std::unordered_map<std::string ,Location*>* locations_;
+    RouteNetwork *route_network_; /**< Pointer to the route network instance. */
+    std::unordered_map<std::string ,Location*>* locations_; /**< Stores locations mapped by their identifiers. */
 
-    std::unordered_set<Vertex<std::string>*> blockedNodes;
-    std::unordered_set<Edge<std::string>*> blockedEdges;
+    std::unordered_set<Vertex<std::string>*> blockedNodes; /**< Set of blocked nodes in the network. */
+    std::unordered_set<Edge<std::string>*> blockedEdges;  /**< Set of blocked edges in the network. */
 
     /**
     * @brief Parses a location data file and loads location data.
@@ -156,19 +152,74 @@ public:
     void showLocationInfoByName(std::string const&  name);
 
     /**
-     * @brief Finds and displays the optimal route between two locations by ID.
-     * @param src Source location ID.
-     * @param dest Destination location ID.
-     * @param route_network The RouteNetwork object for route calculation.
-     * @param call_mode The mode (ID, Code, Name).
-     * @param route_mode The route mode (Driving or Walking).
-     * @param max_walk_time (Optional) Maximum allowed walking time restriction.
-     */
+    * @brief Finds and displays the optimal route between two locations by ID.
+    * @param src Source location ID.
+    * @param dest Destination location ID.
+    * @param route_network The RouteNetwork object for route calculation.
+    * @param call_mode The mode (ID, Code, Name).
+    * @param route_mode The route mode (Driving or Walking).
+    * @param max_walk_time (Optional) Maximum allowed walking time restriction.
+    */
     void routeById(int src, int dest, RouteNetwork& route_network, int call_mode, int route_mode, int max_walk_time =-1);
+
+    /**
+    * @brief Finds and displays the optimal route between two locations by Code.
+    * @param src Source location code.
+    * @param dest Destination location code.
+    * @param route_network The RouteNetwork object for route calculation.
+    * @param route_mode The route mode (Driving or Walking).
+    * @param max_walk_time (Optional) Maximum allowed walking time.
+    */
     void routeByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode,int max_walk_time =-1);
+
+    /**
+    * @brief Finds and displays the optimal route between two locations by Name.
+    * @param src Source location name.
+    * @param dest Destination location name.
+    * @param route_network The RouteNetwork object for route calculation.
+    * @param route_mode The route mode (Driving or Walking).
+    * @param max_walk_time (Optional) Maximum allowed walking time.
+    */
     void routeByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, int max_walk_time =-1);
+
+    /**
+    * @brief Finds a restricted route considering avoided nodes and segments.
+    * @param src Source location ID.
+    * @param dest Destination location ID.
+    * @param route_network The RouteNetwork object for route calculation.
+    * @param call_mode The mode (ID, Code, Name).
+    * @param route_mode The route mode (Driving or Walking).
+    * @param avoid_nodes List of node IDs to avoid.
+    * @param avoid_routes List of segment (edge) pairs to avoid.
+    * @param include_node (Optional) A specific node that must be included.
+    * @param max_walk_time (Optional) Maximum allowed walking time.
+    */
     void restrictedRouteById(int src, int dest, RouteNetwork& route_network, int call_mode, int route_mode, std::vector<int> avoid_nodes, std::vector<std::pair<int,int>> avoid_routes,  int include_node = -1,  int max_walk_time =-1);
+
+    /**
+    * @brief Finds a restricted route between two locations using unique codes, avoiding specified nodes and routes.
+    * @param src Source location code.
+    * @param dest Destination location code.
+    * @param route_network The RouteNetwork object for route calculation.
+    * @param route_mode The route mode (Driving or Walking).
+    * @param avoid_nodes List of location codes to avoid.
+    * @param avoid_routes List of edges (pairs of location codes) to avoid.
+    * @param include_node (Optional) A specific location that must be included.
+    * @param max_walk_time (Optional) Maximum allowed walking time.
+    */
     void restrictedRouteByCode(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, std::vector<std::string> avoid_nodes, std::vector<std::pair<std::string,std::string>> avoid_routes, std::string include_node="", int max_walk_time=-1);
+
+    /**
+     * @brief Finds a restricted route between two locations using names, avoiding specified nodes and routes.
+     * @param src Source location name.
+     * @param dest Destination location name.
+     * @param route_network The RouteNetwork object for route calculation.
+     * @param route_mode The route mode (Driving or Walking).
+     * @param avoid_nodes List of location names to avoid.
+     * @param avoid_routes List of edges (pairs of location names) to avoid.
+     * @param include_node (Optional) A specific location that must be included.
+     * @param max_walk_time (Optional) Maximum allowed walking time.
+     */
     void restrictedRouteByName(const std::string &src, const std::string &dest, RouteNetwork& route_network, int route_mode, std::vector<std::string> avoid_nodes, std::vector<std::pair<std::string,std::string>> avoid_routes, std::string include_node, int max_walk_time=-1);
 
 };

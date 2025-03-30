@@ -1,9 +1,4 @@
-//
-// Created by tiago on 26/02/2025.
-//
-
 #include "Menu.h"
-#include "../src/PathFinding.cpp"
 #include <filesystem>
 
 #include "RequestProcessor.h"

@@ -1,6 +1,3 @@
-//
-// Created by tiago on 26/02/2025.
-//
 #include "InputHandler.h"
 
 #include <fstream>
@@ -29,6 +26,13 @@ std::string InputHandler::getInputLine() {
     std::cout << std::endl;
     return input;
 }
+
+// change this
+void InputHandler::trimString(std::string &str) {
+    while (!str.empty() && (str.back() == '\r' || str.back() == ','))
+        str.pop_back();
+}
+
 
 
 std::string InputHandler::toLowerString(const std::string& input) {

@@ -1,12 +1,8 @@
-//
-// Created by micael on 01-03-2025.
-//
-
 #include "RequestProcessor.h"
 
 #include <fstream>
 
-#include "PathFinding.cpp"
+#include "PathFinding.h"
 
 #include <iostream>
 #include <ostream>
@@ -61,8 +57,8 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
     double w=0;
     std::vector<Location*> v;
 
-    v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
-    printSimplePath(v, w, call_mode, out);
+    v = PathFinding::getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
+    PathFinding::printSimplePath(v, w, call_mode, out);
 
     if (v.empty()) return;
 
@@ -74,8 +70,8 @@ void RequestProcessor::processUnrestrictedDriving(Request &request, RouteNetwork
     out << "AlternativeDrivingRoute:";
 
     w=0;
-    v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
-    printSimplePath(v, w, call_mode, out);
+    v = PathFinding::getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
+    PathFinding::printSimplePath(v, w, call_mode, out);
     route_network.clearBlocked();
 
 }
@@ -111,8 +107,8 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
     double w=0;
     std::vector<Location*> v;
     if (request.includeNode == -1) {
-        v = getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
-        printSimplePath(v, w, call_mode, out);
+        v = PathFinding::getPath(&route_network, request.src, request.dest, w, DRIVING_MODE);
+        PathFinding::printSimplePath(v, w, call_mode, out);
         route_network.clearBlocked();
         return;
     }
@@ -121,15 +117,15 @@ void RequestProcessor::processRestrictedDriving(Request &request, RouteNetwork &
 
     w=0;
     std::vector<Location*> v2;
-    v = getPath(&route_network, request.src, request.includeNode, w, DRIVING_MODE);
-    v2 = getPath(&route_network, request.includeNode, request.dest, w, DRIVING_MODE);
+    v = PathFinding::getPath(&route_network, request.src, request.includeNode, w, DRIVING_MODE);
+    v2 = PathFinding::getPath(&route_network, request.includeNode, request.dest, w, DRIVING_MODE);
     if (v.empty() || v2.empty()) {
         out << "none\n";
         return;
     }
 
-    std::vector<Location*> path = mergeIncludePaths(v, v2);
-    printSimplePath(path, w, call_mode, out);
+    std::vector<Location*> path = PathFinding::mergeIncludePaths(v, v2);
+    PathFinding::printSimplePath(path, w, call_mode, out);
 
 }
 
@@ -152,14 +148,14 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
     std::unordered_map<Location*, Path> walkingPath;
     std::unordered_map<Location*, Path> drivingPath;
 
-    dijkstra(&route_network, request.dest, WALKING_MODE);
+    PathFinding::dijkstra(&route_network, request.dest, WALKING_MODE);
     for (auto v : route_network.getLocationSet()) {
         auto* l = static_cast<Location*>(v);
         if (route_network.isNodeBlocked(l)) continue;
         if (l->getCanPark() && l->getDist() < request.maxWalkTime) {
             Path path;
             double w=0;
-            path.path = getVectorPath(&route_network, request.dest, std::stoi(l->getId()), w, WALKING_MODE);
+            path.path = PathFinding::getVectorPath(&route_network, request.dest, std::stoi(l->getId()), w, WALKING_MODE);
             path.dist = w;
             walkingPath[l] = path;
             validParkingNodes.insert(l);
@@ -167,11 +163,11 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
 
     }
 
-   dijkstra(&route_network, request.src, DRIVING_MODE);
+   PathFinding::dijkstra(&route_network, request.src, DRIVING_MODE);
     for (auto p : validParkingNodes) {
         Path path;
         double w=0;
-        path.path = getVectorPath(&route_network, request.src, std::stoi(p->getId()), w, DRIVING_MODE);
+        path.path = PathFinding::getVectorPath(&route_network, request.src, std::stoi(p->getId()), w, DRIVING_MODE);
         path.dist = w;
         drivingPath[p] = path;
     }
@@ -219,7 +215,7 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
     }
 
     std::vector<Location*> v1 = drivingPath[bestParking].path;
-    printSimplePath(v1, drivingPath[bestParking].dist, call_mode, out);
+    PathFinding::printSimplePath(v1, drivingPath[bestParking].dist, call_mode, out);
 
 
     switch (call_mode) {
@@ -241,7 +237,7 @@ void RequestProcessor::processDrivingWalking(Request &request, RouteNetwork &rou
     out << "WalkingRoute:";
     std::vector<Location*> v2 = walkingPath[bestParking].path;
     reverse(v2.begin(), v2.end());
-    printSimplePath(v2, walkingPath[bestParking].dist, call_mode, out);
+    PathFinding::printSimplePath(v2, walkingPath[bestParking].dist, call_mode, out);
 
     out << "TotalTime:" << minTotalTime << std::endl;
 

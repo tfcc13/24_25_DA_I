@@ -1,7 +1,3 @@
-//
-// Created by tiago on 26/02/2025.
-//
-
 #include "RouteNetwork.h"
 
 #include <fstream>
@@ -23,13 +19,6 @@ RouteNetwork::~RouteNetwork() {
     delete locations_;
 
 }
-
-// change this
-void trimString(std::string &str) {
-    while (!str.empty() && (str.back() == '\r' || str.back() == ','))
-        str.pop_back();
-}
-
 
 bool RouteNetwork::parseLocation(const std::string& location_file) {
 
@@ -53,7 +42,7 @@ bool RouteNetwork::parseLocation(const std::string& location_file) {
         getline(iss,id,sep);
         getline(iss,code,sep);
         getline(iss,park,sep);
-        trimString(park);
+        InputHandler::trimString(park);
 
         canPark = (std::stoi(park)  == 1);
 
@@ -88,7 +77,7 @@ bool RouteNetwork::parseRoute(const std::string& route_file) {
         getline(iss,dest_location,sep);
         getline(iss,driving_time,sep);
         getline(iss,walking_time,sep);
-        trimString(walking_time);
+        InputHandler::trimString(walking_time);
 
         if (driving_time == "X") {
             d_time = INT_MAX;
