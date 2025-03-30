@@ -262,6 +262,7 @@ Menu *LocationInfoMenu::getNextMenu() {
         case 3: {
             std::cout << "Please introduce the location name." << std::endl;
             input = InputHandler::getInput();
+            input = InputHandler::parseName(input);
             route_network_.showLocationInfoByName(input);
         } break;
     }

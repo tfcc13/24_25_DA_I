@@ -10,6 +10,14 @@
 #include <limits>
 #include <algorithm>
 
+/**
+* @file Graph.h
+* @brief Header file for the graph structure used in the project.
+*
+* This file defines the `Vertex`, `Edge`, and `Graph` classes for representing
+* a directed or undirected graph, along with auxiliary functions for manipulating
+* and querying vertices, edges, and the overall graph structure.
+*/
 
 template <class T>
 class Edge;
@@ -18,12 +26,32 @@ class Edge;
 
 /************************* Vertex  **************************/
 
+/**
+* @class Vertex
+* @brief Represents a vertex in the graph.
+*
+* A vertex holds information about its outgoing edges, incoming edges,
+* distances, and other properties like visited status and indegree.
+*
+* @tparam T Type of the data held in the vertex.
+*/
 template <class T>
 class Vertex {
 public:
+    /**
+    * @brief Constructs a Vertex with the specified information.
+    * @param in The information to be stored in the vertex.
+    */
     Vertex(T in);
+
+    /**
+    * @brief Comparison operator for sorting in a priority queue.
+    * @param vertex Another vertex to compare against.
+    * @return True if the current vertex's distance is less than the other's.
+    */
     bool operator<(Vertex<T> & vertex) const; // // required by MutablePriorityQueue
 
+    /** Getters and setters for the vertex's properties */
     T getInfo() const;
     std::vector<Edge<T> *> getAdj() const;
     bool isVisited() const;
@@ -47,36 +75,78 @@ public:
     void setIndegree(unsigned int indegree);
     void setDist(double dist);
     void setPath(Edge<T> *path);
+
+    /**
+    * @brief Adds an outgoing edge from this vertex to the destination vertex.
+    * @param d The destination vertex.
+    * @param walking_time The time required to walk along this edge.
+    * @param driving_time The time required to drive along this edge.
+    * @return A pointer to the created edge.
+    */
     Edge<T> * addEdge(Vertex<T> *dest,  double walking_time, double driving_time);
+
+    /**
+    * @brief Removes an outgoing edge to a specified destination vertex.
+    * @param in The information of the destination vertex.
+    * @return True if the edge was removed, false otherwise.
+    */
     bool removeEdge(T in);
+
+    /**
+    * @brief Removes all outgoing edges from this vertex.
+    */
     void removeOutgoingEdges();
 
 protected:
-    T info;                // info node
-    std::vector<Edge<T> *> adj;  // outgoing edges
+    T info;                ///< Information of the vertex
+    std::vector<Edge<T> *> adj;  ///< Outgoing edges from the vertex
 
     // auxiliary fields
-    bool visited = false; // used by DFS, BFS, Prim ...
-    bool processing = false; // used by isDAG (in addition to the visited attribute)
+    // used by DFS, BFS, Prim ...
+    bool visited = false; ///< Flag for visited status
+    bool processing = false;  ///< Flag for processing status
     int low = -1, num = -1; // used by SCC Tarjan
     unsigned int indegree; // used by topsort
-    double dist = 0;
-    Edge<T> *path = nullptr;
+    double dist = 0;  ///< Shortest distance from source
+    Edge<T> *path = nullptr; ///< Shortest path edge
 
-    std::vector<Edge<T> *> incoming; // incoming edges
 
-    int queueIndex = 0; 		// required by MutablePriorityQueue and UFDS
+    std::vector<Edge<T> *> incoming; ///< Incoming edges to the vertex
 
+
+    int queueIndex = 0; 		///< Required for heap-based priority queue operations
+
+    /**
+    * @brief Deletes a specific edge from the vertex.
+    * @param edge The edge to be deleted.
+    */
     void deleteEdge(Edge<T> *edge);
 };
 
 /********************** Edge  ****************************/
 
+/**
+* @class Edge
+* @brief Represents an edge in the graph.
+*
+* An edge connects two vertices and stores properties like walking and driving times,
+* as well as flow for flow-related problems.
+*
+* @tparam T Type of the data held in the vertices.
+*/
 template <class T>
 class Edge {
 public:
+    /**
+    * @brief Constructs an edge from the source to the destination vertex.
+    * @param orig The origin vertex.
+    * @param dest The destination vertex.
+    * @param walking_time The time required to walk along this edge.
+    * @param driving_time The time required to drive along this edge.
+    */
     Edge(Vertex<T> *orig, Vertex<T> *dest,  double walking_time, double driving_time);
 
+    /** Getters and setters for the edge's properties */
     Vertex<T> * getDest() const;
     double getWalkingTime() const;
     double getDrivingTime() const;
@@ -90,57 +160,106 @@ public:
     void setFlow(double flow);
 protected:
     // used for bidirectional edges
-    Vertex<T> *orig;
-    Vertex<T> * dest; // destination vertex
-    double walking_time_;
-    double driving_time_; // edge weight, can also be used for capacity
+    Vertex<T> *orig; ///< Origin vertex
+    Vertex<T> * dest;  ///< Destination vertex
+    double walking_time_; ///< Walking time for the edge
+    double driving_time_; ///< Driving time for the edge
     // auxiliary fields
-    bool selected = false;
+    bool selected = false; ///< Whether the edge is selected
 
 
-    Edge<T> *reverse = nullptr;
+    Edge<T> *reverse = nullptr; ///< Reverse edge for bidirectional edges
 
-    double flow; // for flow-related problems
+    double flow; ///< Flow for flow-related problems
 };
 
 /********************** Graph  ****************************/
 
+/**
+* @class Graph
+* @brief Represents a graph structure.
+*
+* The graph consists of a collection of vertices and edges. It provides methods
+* for adding/removing vertices and edges, and for querying graph properties.
+*
+* @tparam T Type of the data held in the vertices.
+*/
 template <class T>
 class Graph {
 public:
     ~Graph();
-    /*
-    * Auxiliary function to find a vertex with a given the content.
+    /**
+    * @brief Finds a vertex in the graph by its information.
+    * @param in The information of the vertex to find.
+    * @return A pointer to the vertex if found, nullptr otherwise.
     */
     Vertex<T> *findVertex(const T &in) const;
-    /*
-     *  Adds a vertex with a given content or info (in) to a graph (this).
-     *  Returns true if successful, and false if a vertex with that content already exists.
-     */
+
+    /**
+    * @brief Adds a vertex to the graph.
+    * @param in A pointer to the vertex to add.
+    * @return True if the vertex was added, false if it already exists.
+    */
     bool addVertex(Vertex<T> *in);
+
+    /**
+    * @brief Removes a vertex from the graph.
+    * @param in The information of the vertex to remove.
+    * @return True if the vertex was removed, false otherwise.
+    */
     bool removeVertex(const T &in);
 
-    /*
-     * Adds an edge to a graph (this), given the contents of the source and
-     * destination vertices and the edge weight (w).
-     * Returns true if successful, and false if the source or destination vertex does not exist.
-     */
+    /**
+    * @brief Adds an edge between two vertices in the graph.
+    * @param sourc The source vertex information.
+    * @param dest The destination vertex information.
+    * @param walking_time The walking time for the edge.
+    * @param driving_time The driving time for the edge.
+    * @return True if the edge was added, false if the vertices don't exist.
+    */
     bool addEdge(const T &sourc, const T &dest, double walking_time, double driving_time);
+
+    /**
+    * @brief Removes an edge between two vertices in the graph.
+    * @param sourc The source vertex information.
+    * @param dest The destination vertex information.
+    * @return True if the edge was removed, false otherwise.
+    */
     bool removeEdge(const T &source, const T &dest);
+
+    /**
+    * @brief Adds a bidirectional edge between two vertices.
+    * @param sourc The source vertex information.
+    * @param dest The destination vertex information.
+    * @param walking_time The walking time for the edge.
+    * @param driving_time The driving time for the edge.
+    * @return True if the bidirectional edge was added, false if the vertices don't exist.
+    */
     bool addBidirectionalEdge(const T &sourc, const T &dest,  double walking_time, double driving_time);
 
+    /**
+    * @brief Gets the number of vertices in the graph.
+    * @return The number of vertices.
+    */
     int getNumVertex() const;
+
+    /**
+     * @brief Gets a vector of all the vertices in the graph.
+     * @return A vector containing all vertices.
+     */
     std::vector<Vertex<T> *> getVertexSet() const;
 
 protected:
-    std::vector<Vertex<T> *> vertexSet;    // vertex set
+    std::vector<Vertex<T> *> vertexSet;    ///< Collection of vertices in the graph
 
-    double ** distMatrix = nullptr;   // dist matrix for Floyd-Warshall
-    int **pathMatrix = nullptr;   // path matrix for Floyd-Warshall
+    double ** distMatrix = nullptr;   ///< Distance matrix for algorithms like Floyd-Warshall
+    int **pathMatrix = nullptr;  //< Path matrix for algorithms like Floyd-Warshall
 
-    /*
-     * Finds the index of the vertex with a given content.
-     */
+    /**
+    * @brief Finds the index of a vertex based on its information.
+    * @param in The information of the vertex to find.
+    * @return The index of the vertex, or -1 if not found.
+    */
     int findVertexIdx(const T &in) const;
 };
 
